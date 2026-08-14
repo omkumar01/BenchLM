@@ -67,14 +67,14 @@ dev = [
     "mypy>=1.10.0",
     "pre-commit>=3.7.0",
 ]
-amd-gpu = [
-    "pyamdgpu>=0.1.0",
-]
-intel-gpu = [
-    "intel-gpu-tools>=1.0.0",
-]
 all = [
-    "benchlm[dev,amd-gpu,intel-gpu]",
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=5.0.0",
+    "pytest-mock>=3.13.0",
+    "ruff>=0.6.0",
+    "mypy>=1.10.0",
+    "pre-commit>=3.7.0",
 ]
 
 [project.scripts]

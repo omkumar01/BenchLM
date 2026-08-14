@@ -55,7 +55,7 @@ echo Pip: & pip --version
 
 REM Step 4: Install dependencies
 echo %GREEN%[4/7] Installing dependencies...%NC%
-uv pip install -e ".[all]" --extra dev
+uv pip install -e ".[dev]"
 echo Dependencies installed
 
 REM Step 5: Verify LM Studio connection

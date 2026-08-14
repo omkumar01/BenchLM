@@ -62,6 +62,7 @@ class BenchmarkConfig(BaseSettings):
     llama_cpp_host: str = "http://localhost:8080"
     lmstudio_host: str = "http://localhost:1234"
     vllm_host: str = "http://localhost:8000"
+    openai_compatible_host: str = "http://localhost:8000/v1"
 
     temperature: float = 0.7
     top_p: float = 0.9
@@ -182,27 +183,70 @@ class ScoringConfig(BaseSettings):
 
 
 class ProviderConfig(BaseSettings):
-    """Provider-specific configuration."""
+    """Provider-specific configuration with API keys."""
 
     model_config = SettingsConfigDict(env_prefix="BENCHLM_PROVIDER_", extra="ignore")
 
+    # Ollama
     ollama_timeout: int = 300
     ollama_keep_alive: str = "5m"
     ollama_num_ctx: int = 4096
     ollama_num_predict: int = -1
 
+    # llama.cpp
     llama_cpp_timeout: int = 300
     llama_cpp_n_ctx: int = 4096
     llama_cpp_n_predict: int = -1
     llama_cpp_n_gpu_layers: int = -1
 
+    # LM Studio
     lmstudio_timeout: int = 300
 
+    # vLLM
     vllm_timeout: int = 300
     vllm_max_model_len: int = 4096
 
+    # OpenAI Compatible
     openai_compatible_timeout: int = 300
     openai_compatible_api_key: str = ""
+    openai_compatible_host: str = "http://localhost:8000/v1"
+
+    # OpenAI
+    openai_api_key: str = ""
+    openai_organization: str = ""
+    openai_base_url: str = "https://api.openai.com/v1"
+
+    # Anthropic
+    anthropic_api_key: str = ""
+    anthropic_base_url: str = "https://api.anthropic.com/v1"
+
+    # Google/Gemini
+    google_api_key: str = ""
+    google_base_url: str = "https://generativelanguage.googleapis.com/v1"
+
+    # Cohere
+    cohere_api_key: str = ""
+    cohere_base_url: str = "https://api.cohere.ai/v1"
+
+    # Together AI
+    together_api_key: str = ""
+    together_base_url: str = "https://api.together.xyz/v1"
+
+    # Fireworks AI
+    fireworks_api_key: str = ""
+    fireworks_base_url: str = "https://api.fireworks.ai/inference/v1"
+
+    # Groq
+    groq_api_key: str = ""
+    groq_base_url: str = "https://api.groq.com/openai/v1"
+
+    # Perplexity
+    perplexity_api_key: str = ""
+    perplexity_base_url: str = "https://api.perplexity.ai/v1"
+
+    # Custom/Other OpenAI-compatible
+    custom_api_key: str = ""
+    custom_base_url: str = "http://localhost:8000/v1"
 
 
 class QualityBenchmarksConfig(BaseSettings):
