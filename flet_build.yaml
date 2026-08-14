@@ -1,0 +1,105 @@
+# BenchLM Flet Build Configuration
+# https://flet.dev/docs/getting-started/building/
+
+name: "BenchLM"
+description: "Professional offline LLM benchmarking suite"
+product_name: "BenchLM"
+org_name: "BenchLM"
+product_version: "0.1.0"
+copyright: "Copyright (C) 2024 BenchLM Team"
+icon: "assets/icon.png"
+splash_screen: "assets/splash.png"
+
+# Android
+android_package: "com.benchlm.app"
+android_version_code: 1
+android_version_name: "0.1.0"
+android_min_sdk: 24
+android_target_sdk: 34
+android_adaptive_icon_foreground: "assets/icon_foreground.png"
+android_adaptive_icon_background: "assets/icon_background.png"
+android_permissions:
+  - "android.permission.INTERNET"
+  - "android.permission.ACCESS_NETWORK_STATE"
+  - "android.permission.WRITE_EXTERNAL_STORAGE"
+  - "android.permission.READ_EXTERNAL_STORAGE"
+  - "android.permission.FOREGROUND_SERVICE"
+  - "android.permission.WAKE_LOCK"
+
+# iOS
+ios_bundle_id: "com.benchlm.app"
+ios_version: "0.1.0"
+ios_deployment_target: "15.0"
+ios_info_plist:
+  NSAppTransportSecurity:
+    NSAllowsArbitraryLoads: true
+  UIBackgroundModes:
+    - "fetch"
+    - "processing"
+
+# macOS
+macos_bundle_id: "com.benchlm.app"
+macos_version: "0.1.0"
+macos_min_version: "11.0"
+macos_category: "public.app-category.developer-tools"
+
+# Windows
+windows_app_id: "com.benchlm.app"
+windows_version: "0.1.0"
+windows_certificate_thumbprint: ""
+windows_publisher_display_name: "BenchLM Team"
+
+# Linux
+linux_package_name: "benchlm"
+linux_version: "0.1.0"
+linux_maintainer: "BenchLM Team <benchlm@example.com>"
+linux_description: "Professional offline LLM benchmarking suite"
+linux_depends:
+  - "libgtk-3-0"
+  - "libwebkit2gtk-4.0-37"
+  - "libayatana-appindicator3-1"
+  - "librsvg2-common"
+
+# Build settings
+include_packages:
+  - "benchlm"
+  - "flet"
+  - "polars"
+  - "numpy"
+  - "scipy"
+  - "sqlmodel"
+  - "httpx"
+  - "psutil"
+  - "pynvml"
+  - "pydantic"
+  - "pydantic_settings"
+  - "plotly"
+  - "kaleido"
+  - "evaluate"
+  - "bert_score"
+  - "reportlab"
+  - "weasyprint"
+  - "jinja2"
+  - "loguru"
+  - "rich"
+  - "tqdm"
+  - "orjson"
+  - "pyyaml"
+
+exclude_packages:
+  - "pytest"
+  - "ruff"
+  - "mypy"
+  - "pre_commit"
+  - "tests"
+  - "benchlm.tests"
+
+# Assets to include
+assets_dir: "assets"
+
+# Python version
+python_version: "3.13"
+
+# Build output
+output_dir: "build"
+build_number: 1

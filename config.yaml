@@ -1,0 +1,185 @@
+# BenchLM Configuration
+# All settings can be overridden via environment variables (prefix: BENCHLM_)
+
+app:
+  name: "BenchLM"
+  version: "0.1.0"
+  debug: false
+  data_dir: "~/.benchlm"
+  log_level: "INFO"
+  theme: "dark"  # dark, light, system
+  accent_color: "#6366F1"  # Indigo primary
+  language: "en"
+
+ui:
+  # Update intervals (ms)
+  hardware_poll_interval: 250
+  temperature_poll_interval: 500
+  power_poll_interval: 500
+  tps_update_per_token: true
+
+  # Layout
+  sidebar_width: 280
+  card_border_radius: 16
+  glassmorphism_enabled: true
+  animations_enabled: true
+  compact_mode: false
+
+  # Virtualization
+  table_virtualization_threshold: 1000
+  chart_lazy_load: true
+
+  # Mobile optimizations
+  mobile_optimization: false
+  touch_friendly: true
+
+benchmark:
+  # Default benchmark configuration
+  default_preset: "standard"
+
+  # Provider defaults
+  default_provider: "ollama"
+  ollama_host: "http://localhost:11434"
+  llama_cpp_host: "http://localhost:8080"
+  lmstudio_host: "http://localhost:1234"
+  vllm_host: "http://localhost:8000"
+
+  # Generation parameters
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 40
+  seed: -1  # -1 = random
+  max_tokens: 2048
+  batch_size: 1
+  context_length: 4096
+  streaming: true
+
+  # Benchmark execution
+  concurrent_users: 1
+  iterations: 10
+  warmup_runs: 2
+  cooldown_seconds: 5
+
+  # Prompt settings
+  system_prompt: ""
+  prompt_dataset: "builtin:general"
+
+hardware:
+  # Polling backends (auto, psutil, pynvml, rocm-smi, intel-gpu-top)
+  cpu_backend: "auto"
+  gpu_backend: "auto"
+  memory_backend: "auto"
+
+  # NVIDIA specific
+  nvidia_gpu_index: 0
+  pynvml_enabled: true
+
+  # AMD specific
+  rocm_smi_path: "rocm-smi"
+
+  # Intel specific
+  intel_gpu_top_path: "intel-gpu-top"
+
+  # Sampling
+  sample_history_size: 100000  # Max samples in ring buffer
+
+database:
+  path: "~/.benchlm/benchlm.db"
+  pool_size: 5
+  max_overflow: 10
+  echo: false
+  backup_enabled: true
+  backup_interval_hours: 24
+  backup_retention_days: 30
+
+exports:
+  default_directory: "~/BenchLM_Exports"
+  formats: ["csv", "json", "html", "pdf", "sqlite"]
+  pdf_engine: "reportlab"  # reportlab or weasyprint
+  include_charts_in_pdf: true
+  include_raw_data: false
+
+scoring:
+  weights:
+    latency: 20
+    throughput: 20
+    quality: 25
+    reliability: 15
+    memory: 10
+    energy: 5
+    context: 5
+
+  grades:
+    s_plus: 950
+    s: 900
+    a: 800
+    b: 700
+    c: 600
+
+providers:
+  # Provider-specific settings
+  ollama:
+    timeout: 300
+    keep_alive: "5m"
+    num_ctx: 4096
+    num_predict: -1
+
+  llama_cpp:
+    timeout: 300
+    n_ctx: 4096
+    n_predict: -1
+    n_gpu_layers: -1
+
+  lmstudio:
+    timeout: 300
+
+  vllm:
+    timeout: 300
+    max_model_len: 4096
+
+  openai_compatible:
+    timeout: 300
+    api_key: ""  # Optional for local endpoints
+
+quality_benchmarks:
+  # Enable/disable quality benchmarks
+  mmlu: true
+  mmlu_pro: false
+  gpqa: false
+  gsm8k: true
+  math: false
+  arc_easy: true
+  arc_challenge: true
+  hellaswag: true
+  truthfulqa: false
+  big_bench: false
+  agieval: false
+  humaneval: true
+  mbpp: true
+  swe_bench: false
+  repobench: false
+  needle: true
+  instruction_following: true
+  reliability: true
+  safety: false
+  agent: false
+
+  # Pass@k settings
+  pass_at_k: [1, 5, 10]
+  humaneval_k: [1, 5, 10]
+  mbpp_k: [1, 5, 10]
+
+  # Needle in Haystack
+  needle_context_lengths: [1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072]
+  needle_depths: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+
+  # Datasets
+  dataset_cache_dir: "~/.benchlm/datasets"
+
+logging:
+  level: "INFO"
+  format: "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
+  rotation: "10 MB"
+  retention: "30 days"
+  compression: "zip"
+  file_path: "~/.benchlm/logs/benchlm.log"
