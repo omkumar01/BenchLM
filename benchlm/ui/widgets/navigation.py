@@ -289,7 +289,7 @@ class Breadcrumb(ft.Container):
                     ft.Text(
                         label,
                         size=13,
-                        weight=ft.FontWeight.MEDIUM if is_last else ft.FontWeight.NORMAL,
+                        weight=ft.FontWeight.W_500 if is_last else ft.FontWeight.NORMAL,
                         color=c.on_surface if is_last else c.on_surface_variant,
                     )
                 )
@@ -299,7 +299,7 @@ class Breadcrumb(ft.Container):
             spacing=4,
             tight=True,
         )
-        self.padding = ft.padding.symmetric(vertical=8, horizontal=12)
+        self.padding = ft.Padding.symmetric(vertical=8, horizontal=12)
 
 
 class SegmentedButton(ft.Container):
@@ -338,17 +338,17 @@ class SegmentedButton(ft.Container):
                         ft.Text(
                             label,
                             size=13,
-                            weight=ft.FontWeight.MEDIUM,
+                            weight=ft.FontWeight.W_500,
                             color=c.on_primary if is_selected else c.on_surface,
                         ),
                     ],
                     spacing=8,
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
-                padding=ft.padding.symmetric(horizontal=16, vertical=10),
+                padding=ft.Padding.symmetric(horizontal=16, vertical=10),
                 bgcolor=c.primary if is_selected else c.surface_variant,
                 border_radius=8,
-                border=ft.border.all(1, c.outline_variant) if not is_selected else None,
+                border=ft.Border.all(1, c.outline_variant) if not is_selected else None,
                 on_click=lambda e, k=key: self._on_click(k),
                 ink=True,
                 animate=ft.Animation(200, ft.AnimationCurve.EASE_OUT),
@@ -375,7 +375,7 @@ class SegmentedButton(ft.Container):
         for k, btn in self._buttons.items():
             is_selected = k == self._selected_key
             btn.bgcolor = c.primary if is_selected else c.surface_variant
-            btn.border = None if is_selected else ft.border.all(1, c.outline_variant)
+            btn.border = None if is_selected else ft.Border.all(1, c.outline_variant)
 
             # Update content colors
             if isinstance(btn.content, ft.Row):
@@ -444,15 +444,15 @@ class Stepper(ft.Container):
                 height=32,
                 bgcolor=c.primary if (is_active or is_completed) else c.surface_container_high,
                 border_radius=16,
-                alignment=ft.alignment.center,
-                border=ft.border.all(2, c.primary) if is_active else None,
+                alignment=ft.Alignment.CENTER,
+                border=ft.Border.all(2, c.primary) if is_active else None,
             )
 
             # Step label
             label_text = ft.Text(
                 label,
                 size=12,
-                weight=ft.FontWeight.MEDIUM if is_active else ft.FontWeight.NORMAL,
+                weight=ft.FontWeight.W_500 if is_active else ft.FontWeight.NORMAL,
                 color=c.on_surface if (is_active or is_completed) else c.on_surface_disabled,
                 text_align=ft.TextAlign.CENTER,
                 max_lines=2,
@@ -474,8 +474,8 @@ class Stepper(ft.Container):
                         width=2,
                         height=24,
                         bgcolor=c.primary if is_completed else c.outline_variant,
-                        margin=ft.margin.only(top=4, bottom=4),
-                        alignment=ft.alignment.center,
+                        margin=ft.Margin.only(top=4, bottom=4),
+                        alignment=ft.Alignment.CENTER,
                     )
                 )
 

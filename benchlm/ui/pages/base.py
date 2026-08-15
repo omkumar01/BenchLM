@@ -16,7 +16,7 @@ class BasePage(ft.Container, ABC):
         icon: str = "",
         **kwargs
     ):
-        self.page = page
+        self.app_page = page
         self.route = route
         self.title = title
         self.icon = icon
@@ -26,17 +26,29 @@ class BasePage(ft.Container, ABC):
 
         # Page configuration
         self.expand = True
-        self.padding = ft.padding.all(24)
-        self.content = self.build()
+        self.padding = ft.Padding.all(0) # Padding is handled by app layout now
+        
+        # Initial animation state
+        self.opacity = 0
+        self.offset = ft.Offset(0, 0.05)
+        self.animate_opacity = ft.Animation(400, ft.AnimationCurve.DECELERATE)
+        self.animate_offset = ft.Animation(400, ft.AnimationCurve.DECELERATE)
+        
+        self.content = self._build()
 
     @abstractmethod
-    def build(self) -> ft.Control:
+    def _build(self) -> ft.Control:
         """Build the page content. Must be implemented by subclasses."""
         pass
 
     async def on_mount(self):
         """Called when page is mounted/navigated to."""
         self._mounted = True
+        # Trigger entry animation
+        self.opacity = 1
+        self.offset = ft.Offset(0, 0)
+        self.update()
+        
         await self._on_mount()
 
     async def on_unmount(self):
@@ -53,18 +65,36 @@ class BasePage(ft.Container, ABC):
         pass
 
     def show_snackbar(self, message: str, severity: str = "info"):
-        """Show a snackbar message."""
+        """Show a modern snackbar message."""
+        theme = self.get_theme()
+        c = theme.colors
+        
         colors = {
-            "info": ft.Colors.BLUE,
-            "success": ft.Colors.GREEN,
-            "warning": ft.Colors.AMBER,
-            "error": ft.Colors.RED,
+            "info": c.tertiary,
+            "success": c.success,
+            "warning": c.warning,
+            "error": c.danger,
+        }
+        
+        icons = {
+            "info": ft.Icons.INFO_OUTLINED,
+            "success": ft.Icons.CHECK_CIRCLE_OUTLINED,
+            "warning": ft.Icons.WARNING_AMBER_OUTLINED,
+            "error": ft.Icons.ERROR_OUTLINE,
         }
 
         self.page.snack_bar = ft.SnackBar(
-            content=ft.Text(message, color=ft.Colors.WHITE),
+            content=ft.Row(
+                controls=[
+                    ft.Icon(icons.get(severity, icons["info"]), color=ft.Colors.WHITE),
+                    ft.Text(message, color=ft.Colors.WHITE, weight=ft.FontWeight.W_500),
+                ]
+            ),
             bgcolor=colors.get(severity, colors["info"]),
             duration=3000,
+            behavior=ft.SnackBarBehavior.FLOATING,
+            margin=ft.Margin.all(24),
+            shape=ft.RoundedRectangleBorder(radius=12),
         )
         self.page.snack_bar.open = True
         self.page.update()

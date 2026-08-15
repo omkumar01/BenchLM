@@ -30,13 +30,12 @@ class HistoryPage(BasePage):
     """History page with benchmark run history and trends."""
 
     def __init__(self, page: ft.Page, **kwargs):
-        super().__init__(page, route="/history", title="History", icon=ft.Icons.HISTORY, **kwargs)
         self._theme = get_theme()
         self._config = get_config()
         self._view_mode = "list"  # list, trends, regressions
         self._filter_model = ""
         self._filter_date = ""
-        self._build()
+        super().__init__(page, route="/history", title="History", icon=ft.Icons.HISTORY, **kwargs)
 
     def _build(self):
         """Build history page UI."""
@@ -87,7 +86,7 @@ class HistoryPage(BasePage):
                     on_change=lambda v: setattr(self, '_filter_date', v) or self._refresh(),
                 ),
                 ft.Container(width=16),
-                ft.FilledButton(text="Export History", icon=ft.Icons.DOWNLOAD, on_click=self._export_history),
+                ft.FilledButton(content=ft.Text("Export History"), icon=ft.Icons.DOWNLOAD, on_click=self._export_history),
             ],
             spacing=0,
             wrap=True,
@@ -214,7 +213,7 @@ class HistoryPage(BasePage):
 
         return GlassCard(
             header=ft.Row([
-                ft.Text("Benchmark Runs", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                ft.Text("Benchmark Runs", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                 ft.Container(expand=True),
                 ft.Text(f"{len(data)} runs total", size=13, color=c.on_surface_variant),
             ]),
@@ -284,7 +283,7 @@ class HistoryPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Moving Averages", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Moving Averages", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Text("7-day and 30-day moving averages coming soon", size=14, color=c.on_surface_variant, text_align=ft.TextAlign.CENTER),
                 ),
             ],
@@ -299,7 +298,7 @@ class HistoryPage(BasePage):
             controls=[
                 GlassCard(
                     header=ft.Row([
-                        ft.Text("Performance Regressions", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                        ft.Text("Performance Regressions", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                         ft.Container(expand=True),
                         ft.Text("No regressions detected", size=13, color=c.success),
                     ]),
@@ -307,7 +306,7 @@ class HistoryPage(BasePage):
                         controls=[
                             ft.Text("All models performing within expected ranges.", size=14, color=c.on_surface_variant, text_align=ft.TextAlign.CENTER),
                             ft.Container(height=16),
-                            ft.Text("Regression detection analyzes:", size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                            ft.Text("Regression detection analyzes:", size=13, weight=ft.FontWeight.W_500, color=c.on_surface),
                             ft.Container(height=8),
                             ft.Column(
                                 controls=[
@@ -331,7 +330,7 @@ class HistoryPage(BasePage):
 
         return ft.Row(
             controls=[
-                ft.Text(metric, size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface, width=100),
+                ft.Text(metric, size=13, weight=ft.FontWeight.W_500, color=c.on_surface, width=100),
                 ft.Text(threshold, size=13, color=c.primary, width=80),
                 ft.Text(method, size=13, color=c.on_surface_variant, expand=True),
                 ft.Icon(ft.Icons.CHECK_CIRCLE, size=16, color=c.success),

@@ -24,11 +24,10 @@ class SettingsPage(BasePage):
     """Settings page with all application preferences."""
 
     def __init__(self, page: ft.Page, **kwargs):
-        super().__init__(page, route="/settings", title="Settings", icon=ft.Icons.SETTINGS, **kwargs)
         self._theme = get_theme()
         self._config = get_config()
         self._settings_tab = "general"
-        self._build()
+        super().__init__(page, route="/settings", title="Settings", icon=ft.Icons.SETTINGS, **kwargs)
 
     def _build(self):
         """Build settings page UI."""
@@ -48,13 +47,13 @@ class SettingsPage(BasePage):
                 ft.Row(
                     controls=[
                         ft.FilledButton(
-                            text="Save All",
+                            content=ft.Text("Save All"),
                             icon=ft.Icons.SAVE,
                             on_click=self._save_all,
                         ),
                         ft.Container(width=8),
                         ft.OutlinedButton(
-                            text="Reset to Defaults",
+                            content=ft.Text("Reset to Defaults"),
                             icon=ft.Icons.RESTORE,
                             on_click=self._reset_defaults,
                         ),
@@ -149,7 +148,7 @@ class SettingsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Application", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Application", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             SelectField(
@@ -176,7 +175,7 @@ class SettingsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Data & Storage", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Data & Storage", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             FormField(config=FormFieldConfig(label="Data Directory"), value=self._config.app.data_dir, on_change=lambda v: self._update_config("app.data_dir", v)),
@@ -189,7 +188,7 @@ class SettingsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Default Provider", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Default Provider", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             SelectField(
@@ -213,7 +212,7 @@ class SettingsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("UI Customization", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("UI Customization", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             ToggleField(label="Glassmorphism Panels", value=self._config.ui.glassmorphism_enabled, on_change=lambda v: self._update_config("ui.glassmorphism_enabled", v)),
@@ -230,7 +229,7 @@ class SettingsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Mobile Optimization", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Mobile Optimization", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             ToggleField(label="Mobile Optimized Layout", value=self._config.ui.mobile_optimization, on_change=lambda v: self._update_config("ui.mobile_optimization", v)),
@@ -256,7 +255,7 @@ class SettingsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Ollama", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Ollama", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             FormField(config=FormFieldConfig(label="Host"), value=b.ollama_host, on_change=lambda v: self._update_config("benchmark.ollama_host", v)),
@@ -271,7 +270,7 @@ class SettingsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("llama.cpp", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("llama.cpp", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             FormField(config=FormFieldConfig(label="Host"), value=b.llama_cpp_host, on_change=lambda v: self._update_config("benchmark.llama_cpp_host", v)),
@@ -286,7 +285,7 @@ class SettingsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("LM Studio", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("LM Studio", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             FormField(config=FormFieldConfig(label="Host"), value=b.lmstudio_host, on_change=lambda v: self._update_config("benchmark.lmstudio_host", v)),
@@ -297,7 +296,7 @@ class SettingsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("vLLM", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("vLLM", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             FormField(config=FormFieldConfig(label="Host"), value=b.vllm_host, on_change=lambda v: self._update_config("benchmark.vllm_host", v)),
@@ -310,7 +309,7 @@ class SettingsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("OpenAI Compatible", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("OpenAI Compatible", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             FormField(config=FormFieldConfig(label="Host"), value="http://localhost:8000", on_change=lambda v: self._update_config("benchmark.openai_compatible_host", v)),
@@ -333,7 +332,7 @@ class SettingsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Generation Parameters", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Generation Parameters", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             ft.ResponsiveRow(
@@ -360,7 +359,7 @@ class SettingsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Execution Parameters", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Execution Parameters", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             ft.ResponsiveRow(
@@ -398,7 +397,7 @@ class SettingsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Core Benchmarks", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Core Benchmarks", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             ft.Text("Enable/disable quality benchmarks by default", size=13, color=c.on_surface_variant),
@@ -439,7 +438,7 @@ class SettingsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Pass@k Configuration", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Pass@k Configuration", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             FormField(config=FormFieldConfig(label="Pass@k values (comma-separated)"), value=",".join(map(str, q.pass_at_k)), on_change=lambda v: self._update_config("quality_benchmarks.pass_at_k", [int(x.strip()) for x in v.split(",")])),
@@ -452,7 +451,7 @@ class SettingsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Needle in Haystack", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Needle in Haystack", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             FormField(config=FormFieldConfig(label="Context lengths (comma-separated)"), value=",".join(map(str, q.needle_context_lengths)), on_change=lambda v: self._update_config("quality_benchmarks.needle_context_lengths", [int(x.strip()) for x in v.split(",")])),
@@ -474,7 +473,7 @@ class SettingsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Polling Intervals", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Polling Intervals", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             ft.Text("Update intervals for hardware monitoring (milliseconds)", size=13, color=c.on_surface_variant),
@@ -495,7 +494,7 @@ class SettingsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Monitoring Backends", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Monitoring Backends", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             SelectField(options=[("auto", "Auto-detect"), ("psutil", "psutil (CPU)")], value=hw.cpu_backend, label="CPU Backend", on_change=lambda v: self._update_config("hardware.cpu_backend", v)),
@@ -527,12 +526,12 @@ class SettingsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Export Configuration", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Export Configuration", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             FilePickerField(label="Default Export Directory", on_result=lambda files: self._update_config("exports.default_directory", files[0] if files else e.default_directory)),
                             ft.Container(height=16),
-                            ft.Text("Default Export Formats", size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                            ft.Text("Default Export Formats", size=13, weight=ft.FontWeight.W_500, color=c.on_surface),
                             ft.Container(height=8),
                             ft.Row(
                                 controls=[
@@ -556,7 +555,7 @@ class SettingsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Database Backup", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Database Backup", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             ToggleField(label="Enable Automatic Backups", value=db.backup_enabled, on_change=lambda v: self._update_config("database.backup_enabled", v)),
@@ -590,7 +589,7 @@ class SettingsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Scoring Weights (must sum to 100)", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Scoring Weights (must sum to 100)", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             ft.Text("Adjust category weights for overall score", size=13, color=c.on_surface_variant),
@@ -615,7 +614,7 @@ class SettingsPage(BasePage):
                             ft.Container(height=8),
                             FormField(config=FormFieldConfig(label="Context Weight"), value=str(w.context), on_change=lambda v: self._update_config("scoring.weights.context", int(v) if v.isdigit() else 5)),
                             ft.Container(height=16),
-                            ft.Text("Grade Thresholds", size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                            ft.Text("Grade Thresholds", size=13, weight=ft.FontWeight.W_500, color=c.on_surface),
                             ft.Container(height=8),
                             ft.ResponsiveRow(
                                 controls=[
@@ -638,7 +637,7 @@ class SettingsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Units", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Units", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             SegmentedButton(
@@ -651,14 +650,14 @@ class SettingsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Danger Zone", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.danger),
+                    header=ft.Text("Danger Zone", size=16, weight=ft.FontWeight.W_600, color=c.danger),
                     content=ft.Column(
                         controls=[
                             ft.Text("These actions cannot be undone", size=13, color=c.on_surface_variant),
                             ft.Container(height=16),
-                            ft.FilledButton(text="Clear All Benchmark Data", icon=ft.Icons.DELETE_FOREVER, on_click=self._clear_all_data, style=ft.ButtonStyle(bgcolor=c.danger)),
+                            ft.FilledButton(content=ft.Text("Clear All Benchmark Data"), icon=ft.Icons.DELETE_FOREVER, on_click=self._clear_all_data, style=ft.ButtonStyle(bgcolor=c.danger)),
                             ft.Container(height=8),
-                            ft.FilledButton(text="Reset All Settings", icon=ft.Icons.FACTORY_RESET, on_click=self._reset_defaults, style=ft.ButtonStyle(bgcolor=c.warning)),
+                            ft.FilledButton(content=ft.Text("Reset All Settings"), icon=ft.Icons.FACTORY_RESET, on_click=self._reset_defaults, style=ft.ButtonStyle(bgcolor=c.warning)),
                         ],
                     ),
                 ),

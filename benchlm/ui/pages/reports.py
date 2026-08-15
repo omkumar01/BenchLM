@@ -21,11 +21,10 @@ class ReportsPage(BasePage):
     """Reports page for generating and exporting benchmark reports."""
 
     def __init__(self, page: ft.Page, **kwargs):
-        super().__init__(page, route="/reports", title="Reports", icon=ft.Icons.DESCRIPTION, **kwargs)
         self._theme = get_theme()
         self._config = get_config()
         self._report_type = "single"  # single, comparison, trend
-        self._build()
+        super().__init__(page, route="/reports", title="Reports", icon=ft.Icons.DESCRIPTION, **kwargs)
 
     def _build(self):
         """Build reports page UI."""
@@ -96,11 +95,11 @@ class ReportsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Report Configuration", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Report Configuration", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             # Run Selection
-                            ft.Text("Select Benchmark Run", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                            ft.Text("Select Benchmark Run", size=14, weight=ft.FontWeight.W_500, color=c.on_surface),
                             ft.Container(height=8),
                             SelectField(
                                 options=[
@@ -114,7 +113,7 @@ class ReportsPage(BasePage):
                             ft.Container(height=24),
 
                             # Sections to Include
-                            ft.Text("Sections to Include", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                            ft.Text("Sections to Include", size=14, weight=ft.FontWeight.W_500, color=c.on_surface),
                             ft.Container(height=8),
                             ft.Column(
                                 controls=[
@@ -139,7 +138,7 @@ class ReportsPage(BasePage):
                             ft.Container(height=24),
 
                             # Export Format
-                            ft.Text("Export Format", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                            ft.Text("Export Format", size=14, weight=ft.FontWeight.W_500, color=c.on_surface),
                             ft.Container(height=8),
                             ft.Row(
                                 controls=[
@@ -154,7 +153,7 @@ class ReportsPage(BasePage):
                             ft.Container(height=24),
 
                             # PDF Options
-                            ft.Text("PDF Options", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                            ft.Text("PDF Options", size=14, weight=ft.FontWeight.W_500, color=c.on_surface),
                             ft.Container(height=8),
                             ft.Row(
                                 controls=[
@@ -174,7 +173,7 @@ class ReportsPage(BasePage):
 
                             # Generate Button
                             ft.FilledButton(
-                                text="Generate Report",
+                                content=ft.Text("Generate Report"),
                                 icon=ft.Icons.DESCRIPTION,
                                 on_click=self._generate_report,
                                 style=self._theme.button_primary_style(),
@@ -193,7 +192,7 @@ class ReportsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Comparison Report", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Comparison Report", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             ft.Text("Select models to compare", size=14, color=c.on_surface_variant),
@@ -201,7 +200,7 @@ class ReportsPage(BasePage):
                             ft.Text("Model selection UI coming soon", size=14, color=c.on_surface_variant, text_align=ft.TextAlign.CENTER),
                             ft.Container(height=24),
                             ft.FilledButton(
-                                text="Generate Comparison Report",
+                                content=ft.Text("Generate Comparison Report"),
                                 icon=ft.Icons.COMPARE_ARROWS,
                                 on_click=self._generate_comparison,
                                 style=self._theme.button_primary_style(),
@@ -220,7 +219,7 @@ class ReportsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Trend Report", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Trend Report", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             ft.Text("Historical trend analysis report", size=14, color=c.on_surface_variant),
@@ -239,7 +238,7 @@ class ReportsPage(BasePage):
                             ),
                             ft.Container(height=24),
                             ft.FilledButton(
-                                text="Generate Trend Report",
+                                content=ft.Text("Generate Trend Report"),
                                 icon=ft.Icons.TRENDING_UP,
                                 on_click=self._generate_trend,
                                 style=self._theme.button_primary_style(),

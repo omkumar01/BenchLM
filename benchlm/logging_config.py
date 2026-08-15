@@ -44,7 +44,10 @@ def setup_logging(config: LoggingConfig | None = None) -> None:
     )
 
     # Set log level for specific modules
-    logger.level("TRACE", no=5, color="<dim>")
+    try:
+        logger.level("TRACE", color="<dim>")
+    except ValueError:
+        pass
 
     logger.info(f"Logging initialized - level: {config.level}, file: {config.file_path}")
 

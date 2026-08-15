@@ -29,7 +29,6 @@ class LiveMonitorPage(BasePage):
     """Live monitor page with real-time charts during benchmark."""
 
     def __init__(self, page: ft.Page, **kwargs):
-        super().__init__(page, route="/live-monitor", title="Live Monitor", icon=ft.Icons.MONITOR_HEART, **kwargs)
         self._theme = get_theme()
         self._config = get_config()
         self._running = False
@@ -57,7 +56,7 @@ class LiveMonitorPage(BasePage):
         self._cpu_gauge: Optional[CircularGauge] = None
         self._gpu_gauge: Optional[CircularGauge] = None
 
-        self._build()
+        super().__init__(page, route="/live-monitor", title="Live Monitor", icon=ft.Icons.MONITOR_HEART, **kwargs)
 
     def _build(self):
         """Build live monitor page UI."""
@@ -323,19 +322,19 @@ class LiveMonitorPage(BasePage):
         self._gauges_row = ft.Row(
             controls=[
                 ft.Container(content=ft.Column([
-                    ft.Text("Utilization", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface_variant),
+                    ft.Text("Utilization", size=14, weight=ft.FontWeight.W_500, color=c.on_surface_variant),
                     ft.Container(height=8),
                     ft.Row([self._cpu_gauge, ft.Container(width=24), self._gpu_gauge], alignment=ft.MainAxisAlignment.CENTER),
                 ]), expand=True),
                 ft.Container(width=16),
                 ft.Container(content=ft.Column([
-                    ft.Text("Temperature", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface_variant),
+                    ft.Text("Temperature", size=14, weight=ft.FontWeight.W_500, color=c.on_surface_variant),
                     ft.Container(height=8),
                     ft.Row([self._cpu_temp_gauge, ft.Container(width=24), self._gpu_temp_gauge], alignment=ft.MainAxisAlignment.CENTER),
                 ]), expand=True),
                 ft.Container(width=16),
                 ft.Container(content=ft.Column([
-                    ft.Text("Power", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface_variant),
+                    ft.Text("Power", size=14, weight=ft.FontWeight.W_500, color=c.on_surface_variant),
                     ft.Container(height=8),
                     ft.Row([self._cpu_power_gauge, ft.Container(width=24), self._gpu_power_gauge], alignment=ft.MainAxisAlignment.CENTER),
                 ]), expand=True),
@@ -358,7 +357,7 @@ class LiveMonitorPage(BasePage):
         self._token_stream_card = GlassCard(
             header=ft.Row(
                 controls=[
-                    ft.Text("Token Stream", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    ft.Text("Token Stream", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     ft.Container(expand=True),
                     StatusIndicator(config=StatusConfig(status="idle", label="Idle", size="small")),
                 ],

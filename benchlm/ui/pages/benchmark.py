@@ -25,12 +25,11 @@ class BenchmarkPage(BasePage):
     """Benchmark configuration and execution page."""
 
     def __init__(self, page: ft.Page, **kwargs):
-        super().__init__(page, route="/benchmark", title="Benchmark", icon=ft.Icons.SPEED, **kwargs)
         self._theme = get_theme()
         self._config = get_config()
         self._selected_models: List[str] = []
         self._benchmark_running = False
-        self._build()
+        super().__init__(page, route="/benchmark", title="Benchmark", icon=ft.Icons.SPEED, **kwargs)
 
     def _build(self):
         """Build benchmark page UI."""
@@ -55,7 +54,7 @@ class BenchmarkPage(BasePage):
 
         # Model Selection Section
         model_section = GlassCard(
-            header=ft.Text("Model Selection", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+            header=ft.Text("Model Selection", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
             content=ft.Column(
                 controls=[
                     ft.Text(
@@ -93,7 +92,7 @@ class BenchmarkPage(BasePage):
         presets_section = GlassCard(
             header=ft.Row(
                 controls=[
-                    ft.Text("Presets", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    ft.Text("Presets", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     ft.Container(expand=True),
                     ft.TextButton("Save Current as Preset", on_click=self._save_preset),
                 ],
@@ -124,7 +123,7 @@ class BenchmarkPage(BasePage):
         c = self._theme.colors
 
         self._run_button = ft.FilledButton(
-            text="Start Benchmark" if not self._benchmark_running else "Running...",
+            content=ft.Text("Start Benchmark") if not self._benchmark_running else "Running...",
             icon=ft.Icons.PLAY_ARROW if not self._benchmark_running else ft.Icons.HOURGLASS_TOP,
             on_click=self._run_benchmark,
             disabled=not self._selected_models or self._benchmark_running,
@@ -132,7 +131,7 @@ class BenchmarkPage(BasePage):
         )
 
         self._pause_button = ft.OutlinedButton(
-            text="Pause",
+            content=ft.Text("Pause"),
             icon=ft.Icons.PAUSE,
             on_click=self._pause_benchmark,
             visible=False,
@@ -140,7 +139,7 @@ class BenchmarkPage(BasePage):
         )
 
         self._stop_button = ft.OutlinedButton(
-            text="Stop",
+            content=ft.Text("Stop"),
             icon=ft.Icons.STOP,
             on_click=self._stop_benchmark,
             visible=False,
@@ -179,7 +178,7 @@ class BenchmarkPage(BasePage):
                         ],
                         spacing=8,
                     ),
-                    padding=ft.padding.symmetric(horizontal=12, vertical=6),
+                    padding=ft.Padding.symmetric(horizontal=12, vertical=6),
                     bgcolor=c.primary_container,
                     border_radius=20,
                 )
@@ -214,7 +213,7 @@ class BenchmarkPage(BasePage):
 
         return ft.Column(
             controls=[
-                ft.Text("Generation Parameters", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                ft.Text("Generation Parameters", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                 ft.Container(height=16),
                 ft.ResponsiveRow(
                     controls=[
@@ -263,7 +262,7 @@ class BenchmarkPage(BasePage):
                 ft.Container(height=16),
                 ft.Divider(height=1, color=c.outline_variant),
                 ft.Container(height=16),
-                ft.Text("Sampling Options", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                ft.Text("Sampling Options", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                 ft.Container(height=16),
                 ft.Row(
                     controls=[
@@ -288,7 +287,7 @@ class BenchmarkPage(BasePage):
 
         return ft.Column(
             controls=[
-                ft.Text("Execution Parameters", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                ft.Text("Execution Parameters", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                 ft.Container(height=16),
                 ft.ResponsiveRow(
                     controls=[
@@ -324,7 +323,7 @@ class BenchmarkPage(BasePage):
                 ft.Container(height=16),
                 ft.Divider(height=1, color=c.outline_variant),
                 ft.Container(height=16),
-                ft.Text("Load Test Configuration", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                ft.Text("Load Test Configuration", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                 ft.Container(height=16),
                 ft.Text("Configure concurrent user simulation and load patterns", size=14, color=c.on_surface_variant),
             ],
@@ -337,7 +336,7 @@ class BenchmarkPage(BasePage):
 
         return ft.Column(
             controls=[
-                ft.Text("Prompt Configuration", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                ft.Text("Prompt Configuration", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                 ft.Container(height=16),
                 FormField(
                     config=FormFieldConfig(
@@ -362,7 +361,7 @@ class BenchmarkPage(BasePage):
                     hint="Select a built-in dataset or use custom prompts",
                 ),
                 ft.Container(height=16),
-                ft.Text("Custom Prompts (one per line)", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                ft.Text("Custom Prompts (one per line)", size=14, weight=ft.FontWeight.W_500, color=c.on_surface),
                 ft.Container(height=8),
                 FormField(
                     config=FormFieldConfig(
@@ -382,9 +381,9 @@ class BenchmarkPage(BasePage):
 
         return ft.Column(
             controls=[
-                ft.Text("Advanced Options", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                ft.Text("Advanced Options", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                 ft.Container(height=16),
-                ft.Text("Hardware Monitoring", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                ft.Text("Hardware Monitoring", size=14, weight=ft.FontWeight.W_500, color=c.on_surface),
                 ft.Container(height=8),
                 ft.Row(
                     controls=[
@@ -397,7 +396,7 @@ class BenchmarkPage(BasePage):
                     wrap=True,
                 ),
                 ft.Container(height=16),
-                ft.Text("Quality Benchmarks", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                ft.Text("Quality Benchmarks", size=14, weight=ft.FontWeight.W_500, color=c.on_surface),
                 ft.Container(height=8),
                 ft.Row(
                     controls=[
@@ -410,7 +409,7 @@ class BenchmarkPage(BasePage):
                     wrap=True,
                 ),
                 ft.Container(height=16),
-                ft.Text("Export Options", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                ft.Text("Export Options", size=14, weight=ft.FontWeight.W_500, color=c.on_surface),
                 ft.Container(height=8),
                 ft.Row(
                     controls=[
@@ -448,7 +447,7 @@ class BenchmarkPage(BasePage):
                             ft.Container(width=16),
                             ft.Column(
                                 controls=[
-                                    ft.Text(name, size=14, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                                    ft.Text(name, size=14, weight=ft.FontWeight.W_600, color=c.on_surface),
                                     ft.Text(desc, size=12, color=c.on_surface_variant),
                                 ],
                                 spacing=2,
@@ -459,7 +458,7 @@ class BenchmarkPage(BasePage):
                         vertical_alignment=ft.CrossAxisAlignment.CENTER,
                     ),
                     padding=16,
-                    border=ft.border.all(1, c.outline_variant),
+                    border=ft.Border.all(1, c.outline_variant),
                     border_radius=12,
                     ink=True,
                     on_click=lambda _, n=name: self._load_preset(n),

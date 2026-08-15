@@ -82,7 +82,7 @@ class PlotlyChart(ft.Container):
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
-                alignment=ft.alignment.center,
+                alignment=ft.Alignment.CENTER,
                 height=self.config.height,
                 expand=True,
             )
@@ -99,7 +99,7 @@ class PlotlyChart(ft.Container):
             # Fallback to placeholder
             self.content = ft.Container(
                 content=ft.Text("Failed to render chart", color=c.danger),
-                alignment=ft.alignment.center,
+                alignment=ft.Alignment.CENTER,
                 height=self.config.height,
             )
             return
@@ -282,7 +282,7 @@ class LazyPlotlyChart(PlotlyChart):
         self.figure_factory = figure_factory
         self._placeholder = placeholder or ft.Container(
             content=ft.ProgressRing(width=32, height=32, stroke_width=3),
-            alignment=ft.alignment.center,
+            alignment=ft.Alignment.CENTER,
         )
         self._loaded = False
         self._loading = False
@@ -298,7 +298,7 @@ class LazyPlotlyChart(PlotlyChart):
         self._loading = True
         self.content = ft.Container(
             content=ft.ProgressRing(width=32, height=32, stroke_width=3),
-            alignment=ft.alignment.center,
+            alignment=ft.Alignment.CENTER,
             height=self.config.height,
         )
         self.update()
@@ -317,7 +317,7 @@ class LazyPlotlyChart(PlotlyChart):
                     ],
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
-                alignment=ft.alignment.center,
+                alignment=ft.Alignment.CENTER,
                 height=self.config.height,
             )
         finally:
@@ -365,7 +365,7 @@ class ChartContainer(ft.Container):
                     ft.Text(
                         self.title,
                         size=16,
-                        weight=ft.FontWeight.SEMIBOLD,
+                        weight=ft.FontWeight.W_600,
                         color=c.on_surface,
                         expand=True,
                     ),

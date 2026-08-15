@@ -26,12 +26,11 @@ class ResultsPage(BasePage):
     """Results page with 13 tabs for detailed benchmark analysis."""
 
     def __init__(self, page: ft.Page, run_id: str = "", **kwargs):
-        super().__init__(page, route="/results", title="Results", icon=ft.Icons.ANALYTICS, **kwargs)
         self._theme = get_theme()
         self._config = get_config()
         self._run_id = run_id
         self._current_tab = 0
-        self._build()
+        super().__init__(page, route="/results", title="Results", icon=ft.Icons.ANALYTICS, **kwargs)
 
     def _build(self):
         """Build results page UI."""
@@ -50,9 +49,9 @@ class ResultsPage(BasePage):
                 ft.Container(expand=True),
                 ft.Row(
                     controls=[
-                        ft.OutlinedButton(text="Export", icon=ft.Icons.DOWNLOAD, on_click=self._export_results),
+                        ft.OutlinedButton(content=ft.Text("Export"), icon=ft.Icons.DOWNLOAD, on_click=self._export_results),
                         ft.Container(width=8),
-                        ft.FilledButton(text="Compare", icon=ft.Icons.COMPARE_ARROWS, on_click=self._navigate_compare),
+                        ft.FilledButton(content=ft.Text("Compare"), icon=ft.Icons.COMPARE_ARROWS, on_click=self._navigate_compare),
                     ],
                 ),
             ],
@@ -153,26 +152,26 @@ class ResultsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Benchmark Overview", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Benchmark Overview", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             ft.Row(
                                 controls=[
                                     ft.Column([
                                         ft.Text("Model", size=12, color=c.on_surface_variant),
-                                        ft.Text("Qwen3-8B (Q4_K_M)", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                                        ft.Text("Qwen3-8B (Q4_K_M)", size=14, weight=ft.FontWeight.W_500, color=c.on_surface),
                                     ], expand=True),
                                     ft.Column([
                                         ft.Text("Provider", size=12, color=c.on_surface_variant),
-                                        ft.Text("Ollama", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                                        ft.Text("Ollama", size=14, weight=ft.FontWeight.W_500, color=c.on_surface),
                                     ], expand=True),
                                     ft.Column([
                                         ft.Text("Date", size=12, color=c.on_surface_variant),
-                                        ft.Text("2026-08-14 14:32", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                                        ft.Text("2026-08-14 14:32", size=14, weight=ft.FontWeight.W_500, color=c.on_surface),
                                     ], expand=True),
                                     ft.Column([
                                         ft.Text("Duration", size=12, color=c.on_surface_variant),
-                                        ft.Text("45.2s", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                                        ft.Text("45.2s", size=14, weight=ft.FontWeight.W_500, color=c.on_surface),
                                     ], expand=True),
                                 ],
                                 spacing=16,
@@ -182,7 +181,7 @@ class ResultsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Key Metrics", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Key Metrics", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             self._build_metric_row("Time to First Token", "124ms (P50)", "89ms (P90)", "2.1ms (P99)"),
@@ -204,13 +203,13 @@ class ResultsPage(BasePage):
         return ft.Container(
             content=ft.Row(
                 controls=[
-                    ft.Text(label, size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface, width=180),
+                    ft.Text(label, size=13, weight=ft.FontWeight.W_500, color=c.on_surface, width=180),
                     ft.Text(val1, size=13, color=c.on_surface, expand=True),
                     ft.Text(val2, size=13, color=c.on_surface_variant, expand=True),
                     ft.Text(val3, size=13, color=c.on_surface_disabled, expand=True),
                 ],
             ),
-            padding=ft.padding.symmetric(vertical=8),
+            padding=ft.Padding.symmetric(vertical=8),
         )
 
     def _build_latency_tab(self) -> ft.Control:
@@ -238,7 +237,7 @@ class ResultsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Percentile Distribution", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Percentile Distribution", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=self._build_percentile_table("TTFT (ms)", [50, 90, 95, 99, 99.9], [124, 189, 234, 412, 567]),
                 ),
             ],
@@ -267,7 +266,7 @@ class ResultsPage(BasePage):
                 ft.Row(
                     controls=[
                         GlassCard(
-                            header=ft.Text("Throughput Metrics", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                            header=ft.Text("Throughput Metrics", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                             content=self._build_metric_grid({
                                 "Output TPS": "87.3",
                                 "Input TPS": "1,240",
@@ -276,7 +275,7 @@ class ResultsPage(BasePage):
                             }),
                         ),
                         GlassCard(
-                            header=ft.Text("Batch Efficiency", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                            header=ft.Text("Batch Efficiency", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                             content=self._build_metric_grid({
                                 "Batch Size": "1",
                                 "Efficiency": "94%",
@@ -317,7 +316,7 @@ class ResultsPage(BasePage):
                 ft.Row(
                     controls=[
                         GlassCard(
-                            header=ft.Text("VRAM Breakdown", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                            header=ft.Text("VRAM Breakdown", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                             content=self._build_metric_grid({
                                 "Model Weights": "4.2 GB",
                                 "KV Cache": "1.8 GB",
@@ -326,7 +325,7 @@ class ResultsPage(BasePage):
                             }),
                         ),
                         GlassCard(
-                            header=ft.Text("RAM Breakdown", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                            header=ft.Text("RAM Breakdown", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                             content=self._build_metric_grid({
                                 "Model (CPU)": "2.1 GB",
                                 "KV Cache (CPU)": "4.5 GB",
@@ -365,7 +364,7 @@ class ResultsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Per-Core CPU Utilization", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Per-Core CPU Utilization", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Text("Heatmap visualization coming soon", size=14, color=c.on_surface_variant, text_align=ft.TextAlign.CENTER),
                 ),
             ],
@@ -395,7 +394,7 @@ class ResultsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Power & Efficiency", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Power & Efficiency", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=self._build_metric_grid({
                         "Avg GPU Power": "287 W",
                         "Peak GPU Power": "342 W",
@@ -416,7 +415,7 @@ class ResultsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Context Length Scaling", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Context Length Scaling", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Text("Context vs TTFT/TPS/Memory charts coming soon", size=14, color=c.on_surface_variant, text_align=ft.TextAlign.CENTER),
                 ),
             ],
@@ -430,7 +429,7 @@ class ResultsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Concurrency Scaling", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Concurrency Scaling", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Text("Users vs Latency/Throughput charts coming soon", size=14, color=c.on_surface_variant, text_align=ft.TextAlign.CENTER),
                 ),
             ],
@@ -444,7 +443,7 @@ class ResultsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Quality Benchmarks", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Quality Benchmarks", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             self._build_quality_row("MMLU", "78.4%", "75.2%", "81.1%"),
@@ -465,7 +464,7 @@ class ResultsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Reliability Metrics", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Reliability Metrics", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=self._build_metric_grid({
                         "Success Rate": "100%",
                         "Timeout Rate": "0%",
@@ -486,7 +485,7 @@ class ResultsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Statistical Summary", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Statistical Summary", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=self._build_percentile_table("TTFT (ms)", [50, 75, 90, 95, 99, 99.9], [124, 156, 189, 234, 412, 567]),
                 ),
             ],
@@ -535,7 +534,7 @@ class ResultsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Export Results", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Export Results", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             ft.Text("Choose export format and options", size=14, color=c.on_surface_variant),
@@ -568,13 +567,13 @@ class ResultsPage(BasePage):
                 controls=[
                     ft.Icon(icon, size=32, color=c.primary),
                     ft.Container(height=8),
-                    ft.Text(label, size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    ft.Text(label, size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     ft.Text(tooltip, size=12, color=c.on_surface_variant, text_align=ft.TextAlign.CENTER),
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             ),
             padding=24,
-            border=ft.border.all(1, c.outline_variant),
+            border=ft.Border.all(1, c.outline_variant),
             border_radius=12,
             ink=True,
             on_click=lambda _: self._export_format(label.lower()),
@@ -595,10 +594,10 @@ class ResultsPage(BasePage):
                     ft.Container(
                         content=ft.Column([
                             ft.Text(label, size=12, color=c.on_surface_variant),
-                            ft.Text(value, size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                            ft.Text(value, size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                         ], spacing=2, horizontal_alignment=ft.CrossAxisAlignment.CENTER),
                         expand=True,
-                        padding=ft.padding.symmetric(vertical=8),
+                        padding=ft.Padding.symmetric(vertical=8),
                     )
                 )
             rows.append(ft.Row(controls=controls, spacing=16))
@@ -614,7 +613,7 @@ class ResultsPage(BasePage):
             rows.append(
                 ft.Row(
                     controls=[
-                        ft.Text(f"P{p}", size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface, width=80),
+                        ft.Text(f"P{p}", size=13, weight=ft.FontWeight.W_500, color=c.on_surface, width=80),
                         ft.Text(f"{v} ms", size=13, color=c.on_surface, expand=True),
                         ft.ProgressBar(value=v/600, color=c.primary, bgcolor=c.surface_variant, height=6, expand=True),
                     ],
@@ -631,14 +630,14 @@ class ResultsPage(BasePage):
         return ft.Container(
             content=ft.Row(
                 controls=[
-                    ft.Text(name, size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface, width=200),
-                    ft.Text(val1, size=13, weight=ft.FontWeight.SEMIBOLD, color=c.primary, expand=True),
+                    ft.Text(name, size=13, weight=ft.FontWeight.W_500, color=c.on_surface, width=200),
+                    ft.Text(val1, size=13, weight=ft.FontWeight.W_600, color=c.primary, expand=True),
                     ft.Text(val2, size=13, color=c.on_surface_variant, expand=True),
                     ft.Text(val3, size=13, color=c.on_surface_disabled, expand=True),
                 ],
             ),
-            padding=ft.padding.symmetric(vertical=8),
-            border=ft.border.only(bottom=ft.BorderSide(1, c.outline_variant)),
+            padding=ft.Padding.symmetric(vertical=8),
+            border=ft.Border.only(bottom=ft.BorderSide(1, c.outline_variant)),
         )
 
     def _export_results(self, _):

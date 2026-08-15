@@ -27,12 +27,11 @@ class ComparisonPage(BasePage):
     """Comparison page for multi-model benchmark comparison."""
 
     def __init__(self, page: ft.Page, models: str = "", **kwargs):
-        super().__init__(page, route="/comparison", title="Comparison", icon=ft.Icons.COMPARE_ARROWS, **kwargs)
         self._theme = get_theme()
         self._config = get_config()
         self._selected_models = models.split(",") if models else ["Qwen3-8B", "Gemma3-9B", "Llama3.1-8B"]
         self._comparison_mode = "overlay"  # overlay, side_by_side, radar, diff, ranking
-        self._build()
+        super().__init__(page, route="/comparison", title="Comparison", icon=ft.Icons.COMPARE_ARROWS, **kwargs)
 
     def _build(self):
         """Build comparison page UI."""
@@ -113,7 +112,7 @@ class ComparisonPage(BasePage):
                         ],
                         spacing=8,
                     ),
-                    padding=ft.padding.symmetric(horizontal=12, vertical=6),
+                    padding=ft.Padding.symmetric(horizontal=12, vertical=6),
                     bgcolor=c.primary_container,
                     border_radius=20,
                 )
@@ -122,11 +121,11 @@ class ComparisonPage(BasePage):
         chips.append(
             ft.Container(
                 content=ft.TextButton(
-                    text="+ Add Model",
+                    content=ft.Text("+ Add Model"),
                     icon=ft.Icons.ADD,
                     on_click=self._add_model,
                 ),
-                padding=ft.padding.symmetric(horizontal=12, vertical=6),
+                padding=ft.Padding.symmetric(horizontal=12, vertical=6),
             )
         )
 
@@ -151,8 +150,8 @@ class ComparisonPage(BasePage):
                         controls=[
                             ft.Container(
                                 content=ft.Text(name, size=14, weight=ft.FontWeight.BOLD, color=c.on_surface, text_align=ft.TextAlign.CENTER),
-                                padding=ft.padding.only(bottom=8),
-                                border=ft.border.only(bottom=ft.BorderSide(3, color)),
+                                padding=ft.Padding.only(bottom=8),
+                                border=ft.Border.only(bottom=ft.BorderSide(3, color)),
                             ),
                             ft.Container(height=8),
                             self._build_compact_metric("TTFT", ttft, ft.Icons.TIMER, c.primary),
@@ -168,7 +167,7 @@ class ComparisonPage(BasePage):
                     expand=True,
                     padding=16,
                     bgcolor=c.surface,
-                    border=ft.border.all(1, c.outline_variant),
+                    border=ft.Border.all(1, c.outline_variant),
                     border_radius=12,
                 )
             )
@@ -183,7 +182,7 @@ class ComparisonPage(BasePage):
             controls=[
                 ft.Icon(icon, size=16, color=color),
                 ft.Text(label, size=11, color=c.on_surface_variant, width=50),
-                ft.Text(value, size=13, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface, text_align=ft.TextAlign.RIGHT, expand=True),
+                ft.Text(value, size=13, weight=ft.FontWeight.W_600, color=c.on_surface, text_align=ft.TextAlign.RIGHT, expand=True),
             ],
             spacing=8,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -355,7 +354,7 @@ class ComparisonPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Difference Analysis (vs Qwen3-8B)", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Difference Analysis (vs Qwen3-8B)", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             self._build_diff_row("Gemma3-9B", "TTFT", "-25ms", "better", c.success),
@@ -381,20 +380,20 @@ class ComparisonPage(BasePage):
         return ft.Container(
             content=ft.Row(
                 controls=[
-                    ft.Text(model, size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface, width=100),
+                    ft.Text(model, size=13, weight=ft.FontWeight.W_500, color=c.on_surface, width=100),
                     ft.Text(metric, size=13, color=c.on_surface_variant, width=100),
                     ft.Container(
                         content=ft.Row([
                             ft.Icon(ft.Icons.ARROW_UPWARD if direction == "better" else ft.Icons.ARROW_DOWNWARD, size=14, color=color),
-                            ft.Text(diff, size=13, weight=ft.FontWeight.SEMIBOLD, color=color),
+                            ft.Text(diff, size=13, weight=ft.FontWeight.W_600, color=color),
                         ], spacing=4),
-                        padding=ft.padding.symmetric(horizontal=8, vertical=4),
+                        padding=ft.Padding.symmetric(horizontal=8, vertical=4),
                         bgcolor=color + "20",
                         border_radius=6,
                     ),
                 ],
             ),
-            padding=ft.padding.symmetric(vertical=8),
+            padding=ft.Padding.symmetric(vertical=8),
         )
 
     def _build_ranking_view(self) -> ft.Control:
@@ -428,7 +427,7 @@ class ComparisonPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Leaderboard", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Leaderboard", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=VirtualizedTable(config=config, data=data),
                 ),
             ],
@@ -440,7 +439,7 @@ class ComparisonPage(BasePage):
         self._selected_models.remove(model)
         self._rebuild()
 
-    def def _add_model(self, _):
+    def _add_model(self, _):
         """Add model to comparison."""
         self.show_snackbar("Model selection dialog coming soon", "info")
 

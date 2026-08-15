@@ -441,7 +441,7 @@ class StackLayout(ft.Stack):
         """Center control in stack."""
         return ft.Container(
             content=control,
-            alignment=ft.alignment.center,
+            alignment=ft.Alignment.CENTER,
             expand=True,
         )
 
@@ -451,7 +451,7 @@ class StackLayout(ft.Stack):
         return ft.Container(
             content=control,
             expand=True,
-            alignment=ft.alignment.center,
+            alignment=ft.Alignment.CENTER,
         )
 
 
@@ -516,7 +516,7 @@ class SafeArea(ft.Container):
         **kwargs
     ):
         # Flet doesn't have native safe area, simulate with padding
-        padding = ft.padding.only(
+        padding = ft.Padding.only(
             top=44 if top else 0,  # iOS status bar
             bottom=34 if bottom else 0,  # iOS home indicator
             left=0 if left else 0,

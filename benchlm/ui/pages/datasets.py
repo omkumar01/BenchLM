@@ -24,11 +24,10 @@ class DatasetsPage(BasePage):
     """Datasets page for managing benchmark prompt datasets."""
 
     def __init__(self, page: ft.Page, **kwargs):
-        super().__init__(page, route="/datasets", title="Datasets", icon=ft.Icons.DATASET, **kwargs)
         self._theme = get_theme()
         self._config = get_config()
         self._dataset_tab = "builtin"  # builtin, custom, validation
-        self._build()
+        super().__init__(page, route="/datasets", title="Datasets", icon=ft.Icons.DATASET, **kwargs)
 
     def _build(self):
         """Build datasets page UI."""
@@ -46,7 +45,7 @@ class DatasetsPage(BasePage):
                 ),
                 ft.Container(expand=True),
                 ft.FilledButton(
-                    text="Create Dataset",
+                    content=ft.Text("Create Dataset"),
                     icon=ft.Icons.ADD,
                     on_click=self._create_dataset,
                     style=self._theme.button_primary_style(),
@@ -186,7 +185,7 @@ class DatasetsPage(BasePage):
                     header=ft.Row(
                         controls=[
                             ft.Column([
-                                ft.Text(ds["name"], size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                                ft.Text(ds["name"], size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                                 ft.Text(ds["description"], size=13, color=c.on_surface_variant),
                             ], expand=True, spacing=4),
                             ft.Column([
@@ -205,7 +204,7 @@ class DatasetsPage(BasePage):
                             ft.Text(f"Languages: {', '.join(ds['languages'])}", size=12, color=c.on_surface_disabled),
                             ft.Container(width=16),
                             ft.FilledButton(
-                                text="Use Dataset",
+                                content=ft.Text("Use Dataset"),
                                 on_click=lambda _, d=ds: self._select_dataset(d),
                             ),
                         ],
@@ -227,7 +226,7 @@ class DatasetsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Custom Datasets", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Custom Datasets", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             ft.Text("Create and manage your own prompt datasets", size=14, color=c.on_surface_variant),
@@ -256,9 +255,9 @@ class DatasetsPage(BasePage):
                             ft.Container(height=16),
                             ft.Row(
                                 controls=[
-                                    ft.FilledButton(text="Save Dataset", icon=ft.Icons.SAVE, on_click=self._save_custom_dataset),
+                                    ft.FilledButton(content=ft.Text("Save Dataset"), icon=ft.Icons.SAVE, on_click=self._save_custom_dataset),
                                     ft.Container(width=8),
-                                    ft.OutlinedButton(text="Import from File", icon=ft.Icons.UPLOAD_FILE, on_click=self._import_dataset),
+                                    ft.OutlinedButton(content=ft.Text("Import from File"), icon=ft.Icons.UPLOAD_FILE, on_click=self._import_dataset),
                                 ],
                             ),
                         ],
@@ -266,7 +265,7 @@ class DatasetsPage(BasePage):
                 ),
                 ft.Container(height=16),
                 GlassCard(
-                    header=ft.Text("Saved Custom Datasets", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Saved Custom Datasets", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Text("No custom datasets saved yet. Create one above!", size=14, color=c.on_surface_variant, text_align=ft.TextAlign.CENTER),
                 ),
             ],
@@ -280,7 +279,7 @@ class DatasetsPage(BasePage):
         return ft.Column(
             controls=[
                 GlassCard(
-                    header=ft.Text("Dataset Validation", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text("Dataset Validation", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(
                         controls=[
                             ft.Text("Validate dataset quality and compatibility", size=14, color=c.on_surface_variant),
@@ -295,9 +294,9 @@ class DatasetsPage(BasePage):
                                 label="Select Dataset to Validate",
                             ),
                             ft.Container(height=16),
-                            ft.FilledButton(text="Run Validation", icon=ft.Icons.CHECK_CIRCLE, on_click=self._validate_dataset),
+                            ft.FilledButton(content=ft.Text("Run Validation"), icon=ft.Icons.CHECK_CIRCLE, on_click=self._validate_dataset),
                             ft.Container(height=16),
-                            ft.Text("Validation checks:", size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                            ft.Text("Validation checks:", size=13, weight=ft.FontWeight.W_500, color=c.on_surface),
                             ft.Container(height=8),
                             ft.Column(
                                 controls=[
@@ -325,7 +324,7 @@ class DatasetsPage(BasePage):
                 ft.Icon(ft.Icons.RADIO_BUTTON_UNCHECKED, size=20, color=c.on_surface_variant),
                 ft.Container(width=12),
                 ft.Column([
-                    ft.Text(name, size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                    ft.Text(name, size=13, weight=ft.FontWeight.W_500, color=c.on_surface),
                     ft.Text(desc, size=12, color=c.on_surface_variant),
                 ], expand=True),
                 ft.Icon(ft.Icons.INFO_OUTLINE, size=18, color=c.tertiary),

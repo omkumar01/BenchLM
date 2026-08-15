@@ -30,11 +30,15 @@ class CardConfig:
 
 
 class BaseCard(ft.Container):
-    """Base card with theming support."""
+    """Base card with theming support and premium hover animations."""
 
     def __init__(self, config: CardConfig | None = None, **kwargs):
         self.config = config or CardConfig()
         self._theme = get_theme()
+        
+        # Hover state
+        self._is_hovered = False
+        
         super().__init__(**kwargs)
         self._apply_style()
 
@@ -43,32 +47,71 @@ class BaseCard(ft.Container):
         c = self._theme.colors
         cfg = self.config
 
+        # Base animation settings
+        self.animate = ft.Animation(300, ft.AnimationCurve.EASE_OUT_CUBIC)
+        self.animate_scale = ft.Animation(300, ft.AnimationCurve.EASE_OUT_CUBIC)
+        self.on_hover = self._on_hover
+        self.scale = ft.Scale(1.0)
+
         if cfg.variant == CardVariant.GLASS:
             self.bgcolor = c.glass_bg
-            self.border = ft.border.all(1, c.glass_border)
+            self.border = ft.Border.all(1, c.glass_border)
             self.shadow = ft.BoxShadow(
                 spread_radius=0,
-                blur_radius=20,
+                blur_radius=24,
                 color=c.shadow,
-                offset=ft.Offset(0, 4),
+                offset=ft.Offset(0, 8),
             )
+            # Add blur for glass effect if supported
+            self.blur = ft.Blur(10, 10, ft.BlurTileMode.CLAMP)
+            self._base_shadow = self.shadow
+            self._hover_shadow = ft.BoxShadow(
+                spread_radius=0,
+                blur_radius=40,
+                color=c.shadow,
+                offset=ft.Offset(0, 16),
+            )
+            
         elif cfg.variant == CardVariant.ELEVATED:
             self.bgcolor = c.surface
-            self.border = ft.border.all(1, c.outline)
+            self.border = ft.Border.all(1, c.outline)
             self.shadow = ft.BoxShadow(
                 spread_radius=0,
-                blur_radius=15,
+                blur_radius=16,
                 color=c.shadow_strong,
                 offset=ft.Offset(0, 4),
             )
+            self._base_shadow = self.shadow
+            self._hover_shadow = ft.BoxShadow(
+                spread_radius=0,
+                blur_radius=24,
+                color=c.shadow_strong,
+                offset=ft.Offset(0, 12),
+            )
+            
         elif cfg.variant == CardVariant.OUTLINED:
             self.bgcolor = c.surface
-            self.border = ft.border.all(1, c.outline)
+            self.border = ft.Border.all(1, c.outline)
             self.shadow = None
+            self._base_shadow = None
+            self._hover_shadow = ft.BoxShadow(
+                spread_radius=0,
+                blur_radius=12,
+                color=c.shadow,
+                offset=ft.Offset(0, 4),
+            )
+            
         elif cfg.variant == CardVariant.FILLED:
             self.bgcolor = c.surface_container
             self.border = None
             self.shadow = None
+            self._base_shadow = None
+            self._hover_shadow = ft.BoxShadow(
+                spread_radius=0,
+                blur_radius=12,
+                color=c.shadow,
+                offset=ft.Offset(0, 4),
+            )
 
         self.border_radius = cfg.border_radius
         self.padding = cfg.padding
@@ -76,7 +119,21 @@ class BaseCard(ft.Container):
         if cfg.on_click:
             self.on_click = cfg.on_click
             self.ink = True
-            self.animate = ft.Animation(200, ft.AnimationCurve.EASE_OUT)
+            
+    def _on_hover(self, e):
+        """Handle hover animations."""
+        self._is_hovered = e.data == "true"
+        
+        # Scale effect
+        self.scale = ft.Scale(1.02 if self._is_hovered else 1.0)
+        
+        # Shadow effect
+        if self._is_hovered and hasattr(self, '_hover_shadow'):
+            self.shadow = self._hover_shadow
+        elif hasattr(self, '_base_shadow'):
+            self.shadow = self._base_shadow
+            
+        self.update()
 
 
 class MetricCard(BaseCard):
@@ -126,7 +183,7 @@ class MetricCard(BaseCard):
         icon_control = ft.Container()
         if self._icon:
             icon_control = ft.Icon(
-                name=self._icon,
+                icon=self._icon,
                 size=24,
                 color=self._icon_color or status_color,
             )
@@ -166,7 +223,7 @@ class MetricCard(BaseCard):
                     ft.Text(
                         f"{abs(self._trend):.1f}%",
                         size=12,
-                        weight=ft.FontWeight.MEDIUM,
+                        weight=ft.FontWeight.W_500,
                         color=trend_color,
                     ),
                     ft.Text(
@@ -183,7 +240,7 @@ class MetricCard(BaseCard):
         label_text = ft.Text(
             self._label,
             size=13,
-            weight=ft.FontWeight.MEDIUM,
+            weight=ft.FontWeight.W_500,
             color=c.on_surface_variant,
             text_align=ft.TextAlign.CENTER,
         )
@@ -198,7 +255,7 @@ class MetricCard(BaseCard):
                 ft.Container(height=8),
                 ft.Container(
                     content=value_text,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 ),
                 ft.Container(height=4),
                 trend_control,
@@ -267,7 +324,7 @@ class StatCard(BaseCard):
                 ft.Text(
                     self._title,
                     size=16,
-                    weight=ft.FontWeight.SEMIBOLD,
+                    weight=ft.FontWeight.W_600,
                     color=c.on_surface,
                 )
             )
@@ -336,7 +393,7 @@ class StatCard(BaseCard):
                 tight=True,
             ),
             expand=True,
-            padding=ft.padding.symmetric(vertical=8),
+            padding=ft.Padding.symmetric(vertical=8),
         )
 
     def update_stats(self, stats: dict[str, Any]):
@@ -463,7 +520,7 @@ class ChartCard(GlassCard):
         title_text = ft.Text(
             self._title,
             size=16,
-            weight=ft.FontWeight.SEMIBOLD,
+            weight=ft.FontWeight.W_600,
             color=c.on_surface,
             expand=True,
         )
@@ -481,7 +538,7 @@ class ChartCard(GlassCard):
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
             ),
-            padding=ft.padding.only(bottom=12),
+            padding=ft.Padding.only(bottom=12),
         )
 
     def _build(self):
@@ -509,7 +566,7 @@ class ChartCard(GlassCard):
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
-                alignment=ft.alignment.center,
+                alignment=ft.Alignment.CENTER,
                 height=300,
             )
         elif self._error:
@@ -521,7 +578,7 @@ class ChartCard(GlassCard):
                         ft.Text(
                             "Failed to load chart",
                             size=16,
-                            weight=ft.FontWeight.MEDIUM,
+                            weight=ft.FontWeight.W_500,
                             color=c.on_surface,
                         ),
                         ft.Container(height=4),
@@ -533,7 +590,7 @@ class ChartCard(GlassCard):
                         ),
                         ft.Container(height=16),
                         ft.FilledButton(
-                            text="Retry",
+                            content=ft.Text("Retry"),
                             icon=ft.Icons.REFRESH,
                             on_click=lambda _: self._on_retry(),
                         ),
@@ -541,7 +598,7 @@ class ChartCard(GlassCard):
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     alignment=ft.MainAxisAlignment.CENTER,
                 ),
-                alignment=ft.alignment.center,
+                alignment=ft.Alignment.CENTER,
                 height=300,
             )
         else:

@@ -103,7 +103,7 @@ class VirtualizedTable(ft.Container):
                     label=ft.Text(
                         col_cfg.label,
                         size=13,
-                        weight=ft.FontWeight.SEMIBOLD,
+                        weight=ft.FontWeight.W_600,
                         color=c.on_surface_variant,
                     ),
                     numeric=col_cfg.align == ft.CrossAxisAlignment.END,
@@ -157,7 +157,7 @@ class VirtualizedTable(ft.Container):
             data_row_min_height=cfg.row_height,
             data_row_max_height=cfg.row_height,
             show_checkbox_column=cfg.selectable,
-            border=ft.border.all(1, c.outline_variant) if cfg.show_borders else None,
+            border=ft.Border.all(1, c.outline_variant) if cfg.show_borders else None,
             horizontal_margin=12,
             column_spacing=16,
             sort_column_index=self._get_sort_column_index() if cfg.sort_column else None,
@@ -181,14 +181,14 @@ class VirtualizedTable(ft.Container):
                     content=ft.Text(
                         col_cfg.label,
                         size=13,
-                        weight=ft.FontWeight.SEMIBOLD,
+                        weight=ft.FontWeight.W_600,
                         color=c.on_surface_variant,
                     ),
                     width=width,
                     height=cfg.header_height,
-                    alignment=ft.alignment.center_left,
-                    padding=ft.padding.symmetric(horizontal=12),
-                    border=ft.border.only(bottom=ft.BorderSide(1, c.outline_variant)),
+                    alignment=ft.Alignment.CENTER_LEFT,
+                    padding=ft.Padding.symmetric(horizontal=12),
+                    border=ft.Border.only(bottom=ft.BorderSide(1, c.outline_variant)),
                 )
             )
 
@@ -205,7 +205,7 @@ class VirtualizedTable(ft.Container):
         self._list_view = ft.ListView(
             controls=[],
             spacing=0,
-            padding=ft.padding.only(bottom=8),
+            padding=ft.Padding.only(bottom=8),
             expand=True,
             auto_scroll=False,
         )
@@ -222,7 +222,7 @@ class VirtualizedTable(ft.Container):
                 ft.Container(
                     content=self._list_view,
                     expand=True,
-                    border=ft.border.all(1, c.outline_variant),
+                    border=ft.Border.all(1, c.outline_variant),
                     border_radius=ft.border_radius.only(bottom_left=8, bottom_right=8),
                 ),
             ],
@@ -278,9 +278,9 @@ class VirtualizedTable(ft.Container):
                     ),
                     width=width,
                     height=cfg.row_height,
-                    alignment=ft.alignment.center_left,
-                    padding=ft.padding.symmetric(horizontal=12),
-                    border=ft.border.only(right=ft.BorderSide(1, c.outline_variant)) if col_cfg != cfg.columns[-1] else None,
+                    alignment=ft.Alignment.CENTER_LEFT,
+                    padding=ft.Padding.symmetric(horizontal=12),
+                    border=ft.Border.only(right=ft.BorderSide(1, c.outline_variant)) if col_cfg != cfg.columns[-1] else None,
                 )
             )
 
@@ -445,7 +445,7 @@ class SortableColumn(ft.Container):
                 ft.Text(
                     self.label,
                     size=13,
-                    weight=ft.FontWeight.SEMIBOLD,
+                    weight=ft.FontWeight.W_600,
                     color=c.on_surface,
                 ),
                 icon,
@@ -454,7 +454,7 @@ class SortableColumn(ft.Container):
             alignment=ft.MainAxisAlignment.CENTER,
         )
 
-        self.padding = ft.padding.symmetric(horizontal=12, vertical=8)
+        self.padding = ft.Padding.symmetric(horizontal=12, vertical=8)
         self.on_click = lambda _: self._handle_click()
         self.ink = True
         self.tooltip = "Click to sort"

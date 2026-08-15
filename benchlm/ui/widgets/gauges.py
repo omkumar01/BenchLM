@@ -51,6 +51,10 @@ class GaugeConfig:
     sweep_angle: float = 360  # degrees
     track_color: Optional[str] = None
     progress_color: Optional[str] = None
+    stroke_width: float = 8
+    font_size: int = 16
+    label_font_size: int = 12
+    icon: Optional[str] = None
     gradient_colors: Optional[list[str]] = None
     animation_duration: int = 500
     easing: ft.AnimationCurve = ft.AnimationCurve.EASE_OUT
@@ -155,7 +159,7 @@ class CircularGauge(ft.Container):
                     content=center_content,
                     width=cfg.size.diameter,
                     height=cfg.size.diameter,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 ),
             ],
             width=cfg.size.diameter,
@@ -200,7 +204,10 @@ class CircularGauge(ft.Container):
         self._progress_arc.value = self._normalized_value
         if self.config.show_value:
             self._value_text.value = self._format_value(self._value)
-        self.update()
+        try:
+            self.update()
+        except RuntimeError:
+            pass
 
     def animate_to(self, value: float, duration: int | None = None):
         """Animate gauge to new value."""
@@ -252,7 +259,7 @@ class LinearGauge(ft.Container):
         self._label_text = ft.Text(
             cfg.label,
             size=12,
-            weight=ft.FontWeight.MEDIUM,
+            weight=ft.FontWeight.W_500,
             color=c.on_surface,
         ) if cfg.show_label else ft.Container()
 
@@ -312,7 +319,7 @@ class LinearGauge(ft.Container):
         )
 
         self.width = cfg.size.diameter * 2 if cfg.size != GaugeSize.SMALL else 200
-        self.padding = ft.padding.symmetric(vertical=8)
+        self.padding = ft.Padding.symmetric(vertical=8)
 
     def _format_value(self, value: float) -> str:
         if value >= 1000000:
@@ -493,7 +500,7 @@ class RadialGauge(ft.Container):
                 ft.Container(
                     width=d,
                     height=d,
-                    border=ft.border.all(stroke, c.surface_container_high),
+                    border=ft.Border.all(stroke, c.surface_container_high),
                     border_radius=d // 2,
                 ),
                 # Threshold arcs (would need custom paint for true arcs)
@@ -510,7 +517,7 @@ class RadialGauge(ft.Container):
                 ft.Container(
                     width=d,
                     height=d,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                     content=ft.Column(
                         controls=[
                             ft.Text(

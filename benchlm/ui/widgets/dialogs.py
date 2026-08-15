@@ -29,7 +29,7 @@ class ConfirmDialog(ft.AlertDialog):
         confirm_color = confirm_color or c.primary
 
         super().__init__(
-            title=ft.Text(title, size=18, weight=ft.FontWeight.SEMIBOLD),
+            title=ft.Text(title, size=18, weight=ft.FontWeight.W_600),
             content=ft.Text(message, size=14),
             actions=[
                 ft.TextButton(
@@ -97,7 +97,7 @@ class AlertDialog(ft.AlertDialog):
                 controls=[
                     ft.Icon(config["icon"], size=24, color=config["color"]),
                     ft.Container(width=12),
-                    ft.Text(title, size=18, weight=ft.FontWeight.SEMIBOLD, expand=True),
+                    ft.Text(title, size=18, weight=ft.FontWeight.W_600, expand=True),
                 ],
                 alignment=ft.MainAxisAlignment.START,
             ),
@@ -170,7 +170,7 @@ class InputDialog(ft.AlertDialog):
         )
 
         super().__init__(
-            title=ft.Text(title, size=18, weight=ft.FontWeight.SEMIBOLD),
+            title=ft.Text(title, size=18, weight=ft.FontWeight.W_600),
             content=ft.Column(
                 controls=[
                     ft.Text(message, size=14) if message else ft.Container(),
@@ -246,7 +246,7 @@ class SettingsDialog(ft.AlertDialog):
         )
 
         super().__init__(
-            title=ft.Text(title, size=18, weight=ft.FontWeight.SEMIBOLD),
+            title=ft.Text(title, size=18, weight=ft.FontWeight.W_600),
             content=ft.Container(
                 content=tabs_control,
                 width=600,
@@ -254,11 +254,11 @@ class SettingsDialog(ft.AlertDialog):
             ),
             actions=[
                 ft.TextButton(
-                    text="Cancel",
+                    content=ft.Text("Cancel"),
                     on_click=self._handle_cancel,
                 ),
                 ft.FilledButton(
-                    text="Save",
+                    content=ft.Text("Save"),
                     on_click=self._handle_save,
                 ),
             ],
@@ -319,13 +319,13 @@ class ProgressDialog(ft.AlertDialog):
         self._value_text = ft.Text("0%", size=13, color=c.on_surface_disabled) if determinate else ft.Container()
 
         cancel_btn = ft.TextButton(
-            text="Cancel",
+            content=ft.Text("Cancel"),
             on_click=self._handle_cancel,
             visible=cancellable,
         )
 
         super().__init__(
-            title=ft.Text(title, size=18, weight=ft.FontWeight.SEMIBOLD),
+            title=ft.Text(title, size=18, weight=ft.FontWeight.W_600),
             content=ft.Container(
                 content=ft.Column(
                     controls=[
@@ -435,14 +435,14 @@ class MultiStepDialog(ft.AlertDialog):
                 height=28,
                 bgcolor=c.primary if (is_active or is_completed) else c.surface_container_high,
                 border_radius=14,
-                alignment=ft.alignment.center,
-                border=ft.border.all(2, c.primary) if is_active else None,
+                alignment=ft.Alignment.CENTER,
+                border=ft.Border.all(2, c.primary) if is_active else None,
             )
 
             label_text = ft.Text(
                 label,
                 size=11,
-                weight=ft.FontWeight.MEDIUM if is_active else ft.FontWeight.NORMAL,
+                weight=ft.FontWeight.W_500 if is_active else ft.FontWeight.NORMAL,
                 color=c.on_surface if (is_active or is_completed) else c.on_surface_disabled,
                 text_align=ft.TextAlign.CENTER,
             )
@@ -463,11 +463,11 @@ class MultiStepDialog(ft.AlertDialog):
         self._step_content = ft.Container(
             content=self._steps[0] if self._steps else ft.Container(),
             expand=True,
-            padding=ft.padding.only(top=24),
+            padding=ft.Padding.only(top=24),
         )
 
         super().__init__(
-            title=ft.Text(title, size=18, weight=ft.FontWeight.SEMIBOLD),
+            title=ft.Text(title, size=18, weight=ft.FontWeight.W_600),
             content=ft.Column(
                 controls=[
                     self._stepper,
@@ -506,13 +506,13 @@ class MultiStepDialog(ft.AlertDialog):
             elif is_active:
                 circle.content = ft.Text(str(i + 1), size=12, weight=ft.FontWeight.BOLD, color=c.on_primary)
                 circle.bgcolor = c.primary
-                circle.border = ft.border.all(2, c.primary)
+                circle.border = ft.Border.all(2, c.primary)
             else:
                 circle.content = ft.Text(str(i + 1), size=12, weight=ft.FontWeight.BOLD, color=c.on_surface_disabled)
                 circle.bgcolor = c.surface_container_high
                 circle.border = None
 
-            label.weight = ft.FontWeight.MEDIUM if is_active else ft.FontWeight.NORMAL
+            label.weight = ft.FontWeight.W_500 if is_active else ft.FontWeight.NORMAL
             label.color = c.on_surface if (is_active or is_completed) else c.on_surface_disabled
 
         self._stepper.update()

@@ -23,7 +23,6 @@ class DashboardPage(BasePage):
     """Dashboard page with live hardware gauges and current model info."""
 
     def __init__(self, page: ft.Page, **kwargs):
-        super().__init__(page, **kwargs)
         self._theme = get_theme()
         self._config = get_config()
         self._hardware_task: Optional[asyncio.Task] = None
@@ -40,7 +39,7 @@ class DashboardPage(BasePage):
         self._current_model_card: Optional[MetricCard] = None
         self._benchmark_status: Optional[StatusIndicator] = None
 
-        self._build()
+        super().__init__(page, **kwargs)
 
     def _build(self):
         """Build dashboard UI."""
@@ -75,7 +74,7 @@ class DashboardPage(BasePage):
                 ),
                 ft.Container(expand=True),
                 ft.FilledButton(
-                    text="New Benchmark",
+                    content=ft.Text("New Benchmark"),
                     icon=ft.Icons.PLAY_ARROW,
                     on_click=lambda _: self._navigate_to("benchmark"),
                     style=self._theme.button_primary_style(),
@@ -116,7 +115,7 @@ class DashboardPage(BasePage):
         hardware_section = GlassCard(
             header=ft.Row(
                 controls=[
-                    ft.Text("Hardware Monitor", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    ft.Text("Hardware Monitor", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     ft.Container(expand=True),
                     StatusIndicator(
                         config=StatusConfig(status="running", label="Live", size="small"),
@@ -153,7 +152,7 @@ class DashboardPage(BasePage):
         recent_section = GlassCard(
             header=ft.Row(
                 controls=[
-                    ft.Text("Recent Benchmarks", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    ft.Text("Recent Benchmarks", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     ft.Container(expand=True),
                     ft.TextButton("View All", on_click=lambda _: self._navigate_to("history")),
                 ],
@@ -165,8 +164,8 @@ class DashboardPage(BasePage):
                     color=c.on_surface_variant,
                     text_align=ft.TextAlign.CENTER,
                 ),
-                padding=ft.padding.symmetric(vertical=48),
-                alignment=ft.alignment.center,
+                padding=ft.Padding.symmetric(vertical=48),
+                alignment=ft.Alignment.CENTER,
             ),
         )
 
@@ -216,7 +215,7 @@ class DashboardPage(BasePage):
 
         self._cpu_gauges_row = ft.Column(
             controls=[
-                ft.Text("CPU Utilization", size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface_variant),
+                ft.Text("CPU Utilization", size=13, weight=ft.FontWeight.W_500, color=c.on_surface_variant),
                 ft.Container(height=8),
                 self._cpu_gauges,
             ],
@@ -245,7 +244,7 @@ class DashboardPage(BasePage):
 
         self._gpu_gauges_row = ft.Column(
             controls=[
-                ft.Text("GPU Utilization", size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface_variant),
+                ft.Text("GPU Utilization", size=13, weight=ft.FontWeight.W_500, color=c.on_surface_variant),
                 ft.Container(height=8),
                 self._gpu_gauges,
             ],
@@ -277,7 +276,7 @@ class DashboardPage(BasePage):
                 ft.Container(
                     content=ft.Column(
                         controls=[
-                            ft.Text("System Memory", size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface_variant),
+                            ft.Text("System Memory", size=13, weight=ft.FontWeight.W_500, color=c.on_surface_variant),
                             ft.Container(height=8),
                             self._memory_gauges["ram"],
                         ],
@@ -289,7 +288,7 @@ class DashboardPage(BasePage):
                 ft.Container(
                     content=ft.Column(
                         controls=[
-                            ft.Text("GPU Memory", size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface_variant),
+                            ft.Text("GPU Memory", size=13, weight=ft.FontWeight.W_500, color=c.on_surface_variant),
                             ft.Container(height=8),
                             self._memory_gauges["vram"],
                         ],
@@ -329,7 +328,7 @@ class DashboardPage(BasePage):
                 ft.Container(
                     content=ft.Column(
                         controls=[
-                            ft.Text("Thermal", size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface_variant),
+                            ft.Text("Thermal", size=13, weight=ft.FontWeight.W_500, color=c.on_surface_variant),
                             ft.Container(height=8),
                             self._temp_gauges,
                         ],
@@ -341,7 +340,7 @@ class DashboardPage(BasePage):
                 ft.Container(
                     content=ft.Column(
                         controls=[
-                            ft.Text("Power", size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface_variant),
+                            ft.Text("Power", size=13, weight=ft.FontWeight.W_500, color=c.on_surface_variant),
                             ft.Container(height=8),
                             self._power_gauges,
                         ],
@@ -363,7 +362,7 @@ class DashboardPage(BasePage):
                 label=label,
                 icon=icon,
                 icon_color=color,
-                config=ft.Container(),  # Will use default card config
+                config=None,  # Will use default card config
             ),
             expand=True,
             width=200,
@@ -442,7 +441,10 @@ class DashboardPage(BasePage):
         # Update quick stats
         # TODO: Update stat cards
 
-        self.update()
+        try:
+            self.update()
+        except RuntimeError:
+            pass
 
     def update_model_info(self, model_name: str, provider: str, params: dict):
         """Update current model display."""

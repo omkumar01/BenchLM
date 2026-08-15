@@ -74,7 +74,7 @@ class StatusIndicator(ft.Container):
         self._label = ft.Text(
             cfg.label or cfg.status.title(),
             size={"small": 11, "medium": 13, "large": 15}.get(cfg.size, 13),
-            weight=ft.FontWeight.MEDIUM,
+            weight=ft.FontWeight.W_500,
             color=c.on_surface,
             visible=cfg.show_label,
         )
@@ -99,14 +99,37 @@ class StatusIndicator(ft.Container):
         """Start pulse animation for running status."""
         async def pulse():
             while self.config.status == "running" and self._dot:
-                self._dot.width = 14
-                self._dot.height = 14
-                self._dot.update()
-                await asyncio.sleep(500)
-                self._dot.width = 10
-                self._dot.height = 10
-                self._dot.update()
-                await asyncio.sleep(500)
+                has_page = False
+                try:
+                    _ = self.page
+                    has_page = True
+                except RuntimeError:
+                    pass
+
+                if has_page:
+                    self._dot.width = 14
+                    self._dot.height = 14
+                    try:
+                        self._dot.update()
+                    except Exception:
+                        pass
+                await asyncio.sleep(0.5)
+
+                has_page = False
+                try:
+                    _ = self.page
+                    has_page = True
+                except RuntimeError:
+                    pass
+
+                if has_page:
+                    self._dot.width = 10
+                    self._dot.height = 10
+                    try:
+                        self._dot.update()
+                    except Exception:
+                        pass
+                await asyncio.sleep(0.5)
 
         asyncio.create_task(pulse())
 
@@ -189,7 +212,7 @@ class LoadingSpinner(ft.Container):
             controls=[
                 ft.Container(
                     content=self._spinner,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 ),
                 ft.Container(height=12) if self.message else ft.Container(),
                 message_text,
@@ -200,7 +223,7 @@ class LoadingSpinner(ft.Container):
             tight=True,
         )
 
-        self.alignment = ft.alignment.center
+        self.alignment = ft.Alignment.CENTER
 
 
 class ProgressRing(ft.Container):
@@ -243,7 +266,7 @@ class ProgressRing(ft.Container):
         self._track = ft.Container(
             width=self.size,
             height=self.size,
-            border=ft.border.all(self.stroke_width, self._track_color),
+            border=ft.Border.all(self.stroke_width, self._track_color),
             border_radius=self.size // 2,
         )
 
@@ -288,7 +311,7 @@ class ProgressRing(ft.Container):
                     content=center_content,
                     width=self.size,
                     height=self.size,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 ),
             ],
             width=self.size,
@@ -494,8 +517,8 @@ class Badge(ft.Container):
             )
 
         self.content = content
-        self.padding = ft.padding.symmetric(horizontal=sz["padding"], vertical=2)
+        self.padding = ft.Padding.symmetric(horizontal=sz["padding"], vertical=2)
         self.bgcolor = color
         self.border_radius = sz["height"] // 2
         self.height = sz["height"]
-        self.alignment = ft.alignment.center
+        self.alignment = ft.Alignment.CENTER

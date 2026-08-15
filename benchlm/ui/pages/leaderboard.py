@@ -25,11 +25,10 @@ class LeaderboardPage(BasePage):
     """Leaderboard page with global model rankings."""
 
     def __init__(self, page: ft.Page, **kwargs):
-        super().__init__(page, route="/leaderboard", title="Leaderboard", icon=ft.Icons.LEADERBOARD, **kwargs)
         self._theme = get_theme()
         self._config = get_config()
         self._leaderboard_mode = "global"  # global, by_category, by_hardware
-        self._build()
+        super().__init__(page, route="/leaderboard", title="Leaderboard", icon=ft.Icons.LEADERBOARD, **kwargs)
 
     def _build(self):
         """Build leaderboard page UI."""
@@ -113,8 +112,8 @@ class LeaderboardPage(BasePage):
                         controls=[
                             ft.Container(
                                 content=ft.Text(f"#{rank}", size=48 if rank == 1 else (36 if rank == 2 else 28), weight=ft.FontWeight.BOLD, color=color),
-                                alignment=ft.alignment.center,
-                                padding=ft.padding.only(top=24),
+                                alignment=ft.Alignment.CENTER,
+                                padding=ft.Padding.only(top=24),
                             ),
                             ft.Container(height=16),
                             ft.Text(model, size=24 if rank == 1 else (20 if rank == 2 else 18), weight=ft.FontWeight.BOLD, color=c.on_surface, text_align=ft.TextAlign.CENTER),
@@ -125,17 +124,17 @@ class LeaderboardPage(BasePage):
                                     ft.Text("Elo Rating", size=12, color=c.on_surface_variant),
                                     ft.Text(str(elo), size=28, weight=ft.FontWeight.BOLD, color=color),
                                 ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=4),
-                                padding=ft.padding.symmetric(vertical=16),
+                                padding=ft.Padding.symmetric(vertical=16),
                                 bgcolor=color + "20",
                                 border_radius=12,
-                                margin=ft.margin.symmetric(horizontal=24),
+                                margin=ft.Margin.symmetric(horizontal=24),
                             ),
                             ft.Container(height=16),
                             ft.Row(
                                 controls=[
                                     ft.Column([
                                         ft.Text("Score", size=11, color=c.on_surface_variant),
-                                        ft.Text(f"{score}/1000", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                                        ft.Text(f"{score}/1000", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                                     ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, expand=True),
                                     ft.Column([
                                         ft.Text("Grade", size=11, color=c.on_surface_variant),
@@ -149,18 +148,18 @@ class LeaderboardPage(BasePage):
                     width=220,
                     height=height,
                     bgcolor=c.surface,
-                    border=ft.border.all(2, color) if rank == 1 else ft.border.all(1, c.outline_variant),
+                    border=ft.Border.all(2, color) if rank == 1 else ft.Border.all(1, c.outline_variant),
                     border_radius=16,
-                    alignment=ft.alignment.center,
+                    alignment=ft.Alignment.CENTER,
                 )
             )
 
         # Order: 2nd, 1st, 3rd for visual podium effect
         self._podium_row = ft.Row(
             controls=[
-                ft.Container(content=podium_cards[1], alignment=ft.alignment.bottom_center, expand=True),
-                ft.Container(content=podium_cards[0], alignment=ft.alignment.bottom_center, expand=True),
-                ft.Container(content=podium_cards[2], alignment=ft.alignment.bottom_center, expand=True),
+                ft.Container(content=podium_cards[1], alignment=ft.Alignment.BOTTOM_CENTER, expand=True),
+                ft.Container(content=podium_cards[0], alignment=ft.Alignment.BOTTOM_CENTER, expand=True),
+                ft.Container(content=podium_cards[2], alignment=ft.Alignment.BOTTOM_CENTER, expand=True),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=24,
@@ -233,7 +232,7 @@ class LeaderboardPage(BasePage):
 
         return GlassCard(
             header=ft.Row([
-                ft.Text("Global Rankings", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                ft.Text("Global Rankings", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                 ft.Container(expand=True),
                 ft.Text(f"{len(data)} models ranked", size=13, color=c.on_surface_variant),
             ]),
@@ -276,19 +275,19 @@ class LeaderboardPage(BasePage):
                         content=ft.Row(
                             controls=[
                                 ft.Text(f"#{i+1}", size=13, weight=ft.FontWeight.BOLD, color=c.primary, width=30),
-                                ft.Text(entry[0], size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface, expand=True),
+                                ft.Text(entry[0], size=13, weight=ft.FontWeight.W_500, color=c.on_surface, expand=True),
                                 ft.Text(entry[1], size=12, color=c.on_surface_variant, width=100),
-                                ft.Text(str(entry[2]) + (entry[3] if len(entry) > 3 else ""), size=13, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface, width=80),
+                                ft.Text(str(entry[2]) + (entry[3] if len(entry) > 3 else ""), size=13, weight=ft.FontWeight.W_600, color=c.on_surface, width=80),
                             ],
                         ),
-                        padding=ft.padding.symmetric(vertical=8, horizontal=12),
-                        border=ft.border.only(bottom=ft.BorderSide(1, c.outline_variant)) if i < len(entries) - 1 else None,
+                        padding=ft.Padding.symmetric(vertical=8, horizontal=12),
+                        border=ft.Border.only(bottom=ft.BorderSide(1, c.outline_variant)) if i < len(entries) - 1 else None,
                     )
                 )
 
             cards.append(
                 GlassCard(
-                    header=ft.Text(cat, size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+                    header=ft.Text(cat, size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
                     content=ft.Column(controls=rows, spacing=0),
                 )
             )
@@ -303,7 +302,7 @@ class LeaderboardPage(BasePage):
         c = self._theme.colors
 
         return GlassCard(
-            header=ft.Text("By Hardware", size=16, weight=ft.FontWeight.SEMIBOLD, color=c.on_surface),
+            header=ft.Text("By Hardware", size=16, weight=ft.FontWeight.W_600, color=c.on_surface),
             content=ft.Text("Hardware-specific rankings coming soon (RTX 4090, A100, M3 Max, etc.)", size=14, color=c.on_surface_variant, text_align=ft.TextAlign.CENTER),
         )
 

@@ -375,7 +375,7 @@ class SliderField(ft.Container):
         self._value_text = ft.Text(
             f"{self._value:.1f}{self.unit}",
             size=14,
-            weight=ft.FontWeight.MEDIUM,
+            weight=ft.FontWeight.W_500,
             color=c.on_surface,
             width=80,
             text_align=ft.TextAlign.RIGHT,
@@ -384,7 +384,7 @@ class SliderField(ft.Container):
         label_text = ft.Text(
             self.label,
             size=13,
-            weight=ft.FontWeight.MEDIUM,
+            weight=ft.FontWeight.W_500,
             color=c.on_surface,
             width=120,
         ) if self.label else ft.Container()
@@ -601,10 +601,10 @@ class ColorPickerField(ft.Container):
                 ],
                 spacing=8,
             ),
-            padding=ft.padding.symmetric(horizontal=12, vertical=10),
+            padding=ft.Padding.symmetric(horizontal=12, vertical=10),
             bgcolor=self._value,
             border_radius=8,
-            border=ft.border.all(1, c.outline),
+            border=ft.Border.all(1, c.outline),
             on_click=self._open_picker,
             ink=True,
         )
@@ -612,7 +612,7 @@ class ColorPickerField(ft.Container):
         label_text = ft.Text(
             self.label,
             size=13,
-            weight=ft.FontWeight.MEDIUM,
+            weight=ft.FontWeight.W_500,
             color=c.on_surface,
         ) if self.label else ft.Container()
 
@@ -645,7 +645,7 @@ class ColorPickerField(ft.Container):
                     height=36,
                     bgcolor=color,
                     border_radius=8,
-                    border=ft.border.all(2, c.primary) if color == self._value else ft.border.all(1, c.outline),
+                    border=ft.Border.all(2, c.primary) if color == self._value else ft.Border.all(1, c.outline),
                     on_click=lambda e, col=color: self._select_color(col),
                     ink=True,
                     tooltip=color,
@@ -660,11 +660,11 @@ class ColorPickerField(ft.Container):
         )
 
         self._dialog = ft.AlertDialog(
-            title=ft.Text("Pick a color", size=18, weight=ft.FontWeight.SEMIBOLD),
+            title=ft.Text("Pick a color", size=18, weight=ft.FontWeight.W_600),
             content=ft.Container(
                 content=ft.Column(
                     controls=[
-                        ft.Text("Presets", size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface_variant),
+                        ft.Text("Presets", size=13, weight=ft.FontWeight.W_500, color=c.on_surface_variant),
                         ft.Container(height=8),
                         ft.Row(
                             controls=color_controls,
@@ -758,13 +758,13 @@ class FilePickerField(ft.Container):
         )
 
         pick_button = ft.FilledButton(
-            text="Choose File" + ("s" if self.allow_multiple else ""),
+            content=ft.Text("Choose File") + ("s" if self.allow_multiple else ""),
             icon=ft.Icons.FOLDER_OPEN,
             on_click=self._pick_files,
         )
 
         clear_button = ft.TextButton(
-            text="Clear",
+            content=ft.Text("Clear"),
             icon=ft.Icons.CLEAR,
             on_click=self._clear,
             visible=False,
@@ -773,7 +773,7 @@ class FilePickerField(ft.Container):
 
         self.content = ft.Column(
             controls=[
-                ft.Text(self.label, size=13, weight=ft.FontWeight.MEDIUM, color=c.on_surface) if self.label else ft.Container(),
+                ft.Text(self.label, size=13, weight=ft.FontWeight.W_500, color=c.on_surface) if self.label else ft.Container(),
                 ft.Container(height=8) if self.label else ft.Container(),
                 ft.Row(
                     controls=[
@@ -802,7 +802,7 @@ class FilePickerField(ft.Container):
                 allow_multiple=False,
             )
 
-    def _on_result(self, e: ft.FilePickerResultEvent):
+    def _on_result(self, e):
         """Handle file picker result."""
         if e.files:
             self._selected_files = [f.path for f in e.files]

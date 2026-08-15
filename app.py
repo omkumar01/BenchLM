@@ -69,20 +69,14 @@ class BenchLMApplication:
 
     def _configure_page(self):
         """Configure Flet page settings."""
-        self.page.title = "BenchLM - LLM Benchmarking Suite"
+        self.page.title = "BenchLM - Premium Benchmarking Suite"
         self.page.theme_mode = ft.ThemeMode.DARK
-        self.page.window.min_width = 1000
-        self.page.window.min_height = 700
-        self.page.window.width = 1400
-        self.page.window.height = 900
+        self.page.window.min_width = 1100
+        self.page.window.min_height = 800
+        self.page.window.width = 1440
+        self.page.window.height = 960
         self.page.padding = 0
         self.page.spacing = 0
-
-        # Fonts
-        self.page.fonts = {
-            "Inter": "https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800&display=swap",
-            "JetBrains Mono": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap",
-        }
 
         # Route handling
         self.page.on_route_change = self._on_route_change
@@ -92,68 +86,69 @@ class BenchLMApplication:
         """Build the main application UI."""
         c = self._theme.colors
 
-        # Navigation Rail (Desktop)
+        # Navigation Rail (Desktop) - Enhanced with Premium Look
         self._navigation_rail = ft.NavigationRail(
             selected_index=0,
             label_type=ft.NavigationRailLabelType.ALL,
-            min_width=72,
-            max_width=280,
-            bgcolor=ft.Colors.TRANSPARENT,
+            min_width=80,
+            min_extended_width=280,
+            bgcolor=c.surface, # Used deep surface color
             indicator_color=c.primary_container,
+            indicator_shape=ft.RoundedRectangleBorder(radius=12),
             destinations=[
                 ft.NavigationRailDestination(
                     icon=ft.Icon(ft.Icons.DASHBOARD_OUTLINED, size=24),
-                    selected_icon=ft.Icon(ft.Icons.DASHBOARD, size=24),
+                    selected_icon=ft.Icon(ft.Icons.DASHBOARD, size=24, color=c.primary),
                     label="Dashboard",
                 ),
                 ft.NavigationRailDestination(
                     icon=ft.Icon(ft.Icons.MODEL_TRAINING_OUTLINED, size=24),
-                    selected_icon=ft.Icon(ft.Icons.MODEL_TRAINING, size=24),
+                    selected_icon=ft.Icon(ft.Icons.MODEL_TRAINING, size=24, color=c.primary),
                     label="Models",
                 ),
                 ft.NavigationRailDestination(
                     icon=ft.Icon(ft.Icons.SPEED_OUTLINED, size=24),
-                    selected_icon=ft.Icon(ft.Icons.SPEED, size=24),
+                    selected_icon=ft.Icon(ft.Icons.SPEED, size=24, color=c.primary),
                     label="Benchmark",
                 ),
                 ft.NavigationRailDestination(
                     icon=ft.Icon(ft.Icons.MONITOR_HEART_OUTLINED, size=24),
-                    selected_icon=ft.Icon(ft.Icons.MONITOR_HEART, size=24),
+                    selected_icon=ft.Icon(ft.Icons.MONITOR_HEART, size=24, color=c.primary),
                     label="Live Monitor",
                 ),
                 ft.NavigationRailDestination(
                     icon=ft.Icon(ft.Icons.ANALYTICS_OUTLINED, size=24),
-                    selected_icon=ft.Icon(ft.Icons.ANALYTICS, size=24),
+                    selected_icon=ft.Icon(ft.Icons.ANALYTICS, size=24, color=c.primary),
                     label="Results",
                 ),
                 ft.NavigationRailDestination(
                     icon=ft.Icon(ft.Icons.COMPARE_ARROWS_OUTLINED, size=24),
-                    selected_icon=ft.Icon(ft.Icons.COMPARE_ARROWS, size=24),
+                    selected_icon=ft.Icon(ft.Icons.COMPARE_ARROWS, size=24, color=c.primary),
                     label="Comparison",
                 ),
                 ft.NavigationRailDestination(
                     icon=ft.Icon(ft.Icons.HISTORY_OUTLINED, size=24),
-                    selected_icon=ft.Icon(ft.Icons.HISTORY, size=24),
+                    selected_icon=ft.Icon(ft.Icons.HISTORY, size=24, color=c.primary),
                     label="History",
                 ),
                 ft.NavigationRailDestination(
                     icon=ft.Icon(ft.Icons.LEADERBOARD_OUTLINED, size=24),
-                    selected_icon=ft.Icon(ft.Icons.LEADERBOARD, size=24),
+                    selected_icon=ft.Icon(ft.Icons.LEADERBOARD, size=24, color=c.primary),
                     label="Leaderboard",
                 ),
                 ft.NavigationRailDestination(
                     icon=ft.Icon(ft.Icons.DATASET_OUTLINED, size=24),
-                    selected_icon=ft.Icon(ft.Icons.DATASET, size=24),
+                    selected_icon=ft.Icon(ft.Icons.DATASET, size=24, color=c.primary),
                     label="Datasets",
                 ),
                 ft.NavigationRailDestination(
                     icon=ft.Icon(ft.Icons.DESCRIPTION_OUTLINED, size=24),
-                    selected_icon=ft.Icon(ft.Icons.DESCRIPTION, size=24),
+                    selected_icon=ft.Icon(ft.Icons.DESCRIPTION, size=24, color=c.primary),
                     label="Reports",
                 ),
                 ft.NavigationRailDestination(
                     icon=ft.Icon(ft.Icons.SETTINGS_OUTLINED, size=24),
-                    selected_icon=ft.Icon(ft.Icons.SETTINGS, size=24),
+                    selected_icon=ft.Icon(ft.Icons.SETTINGS, size=24, color=c.primary),
                     label="Settings",
                 ),
             ],
@@ -176,96 +171,75 @@ class BenchLMApplication:
                                     ft.Text("BenchLM", size=24, weight=ft.FontWeight.BOLD, color=c.on_surface),
                                 ],
                             ),
-                            ft.Text("LLM Benchmarking Suite", size=13, color=c.on_surface_variant),
+                            ft.Text("Premium Benchmarking", size=13, color=c.on_surface_variant),
                         ],
                     ),
                     padding=24,
                 ),
                 ft.Divider(height=1, color=c.outline_variant),
-                ft.NavigationDrawerDestination(
-                    icon=ft.Icon(ft.Icons.DASHBOARD_OUTLINED, color=c.on_surface_variant),
-                    selected_icon=ft.Icon(ft.Icons.DASHBOARD, color=c.primary),
-                    label="Dashboard",
-                ),
-                ft.NavigationDrawerDestination(
-                    icon=ft.Icon(ft.Icons.MODEL_TRAINING_OUTLINED, color=c.on_surface_variant),
-                    selected_icon=ft.Icon(ft.Icons.MODEL_TRAINING, color=c.primary),
-                    label="Models",
-                ),
-                ft.NavigationDrawerDestination(
-                    icon=ft.Icon(ft.Icons.SPEED_OUTLINED, color=c.on_surface_variant),
-                    selected_icon=ft.Icon(ft.Icons.SPEED, color=c.primary),
-                    label="Benchmark",
-                ),
-                ft.NavigationDrawerDestination(
-                    icon=ft.Icon(ft.Icons.MONITOR_HEART_OUTLINED, color=c.on_surface_variant),
-                    selected_icon=ft.Icon(ft.Icons.MONITOR_HEART, color=c.primary),
-                    label="Live Monitor",
-                ),
-                ft.NavigationDrawerDestination(
-                    icon=ft.Icon(ft.Icons.ANALYTICS_OUTLINED, color=c.on_surface_variant),
-                    selected_icon=ft.Icon(ft.Icons.ANALYTICS, color=c.primary),
-                    label="Results",
-                ),
-                ft.NavigationDrawerDestination(
-                    icon=ft.Icon(ft.Icons.COMPARE_ARROWS_OUTLINED, color=c.on_surface_variant),
-                    selected_icon=ft.Icon(ft.Icons.COMPARE_ARROWS, color=c.primary),
-                    label="Comparison",
-                ),
-                ft.NavigationDrawerDestination(
-                    icon=ft.Icon(ft.Icons.HISTORY_OUTLINED, color=c.on_surface_variant),
-                    selected_icon=ft.Icon(ft.Icons.HISTORY, color=c.primary),
-                    label="History",
-                ),
-                ft.NavigationDrawerDestination(
-                    icon=ft.Icon(ft.Icons.LEADERBOARD_OUTLINED, color=c.on_surface_variant),
-                    selected_icon=ft.Icon(ft.Icons.LEADERBOARD, color=c.primary),
-                    label="Leaderboard",
-                ),
-                ft.NavigationDrawerDestination(
-                    icon=ft.Icon(ft.Icons.DATASET_OUTLINED, color=c.on_surface_variant),
-                    selected_icon=ft.Icon(ft.Icons.DATASET, color=c.primary),
-                    label="Datasets",
-                ),
-                ft.NavigationDrawerDestination(
-                    icon=ft.Icon(ft.Icons.DESCRIPTION_OUTLINED, color=c.on_surface_variant),
-                    selected_icon=ft.Icon(ft.Icons.DESCRIPTION, color=c.primary),
-                    label="Reports",
-                ),
-                ft.Divider(height=1, color=c.outline_variant),
-                ft.NavigationDrawerDestination(
-                    icon=ft.Icon(ft.Icons.SETTINGS_OUTLINED, color=c.on_surface_variant),
-                    selected_icon=ft.Icon(ft.Icons.SETTINGS, color=c.primary),
-                    label="Settings",
-                ),
+                # Drawer destinations map to rail
+                *[ft.NavigationDrawerDestination(
+                    icon=ft.Icon(dest.icon.icon, color=c.on_surface_variant),
+                    selected_icon=ft.Icon(dest.selected_icon.icon, color=c.primary),
+                    label=dest.label,
+                ) for dest in self._navigation_rail.destinations],
             ],
             on_change=self._on_drawer_change,
         )
 
-        # Page Content Area
+        # Page Content Area (With Glassmorphism container support)
         self._page_content = ft.Container(
             content=ft.Text("Loading...", color=c.on_surface_variant),
             expand=True,
             bgcolor=c.background,
+            padding=ft.Padding.all(32), # Added more padding
+        )
+
+        # Top App Bar for desktop
+        desktop_header = ft.Container(
+            content=ft.Row(
+                controls=[
+                    ft.Row(
+                        controls=[
+                            ft.Icon(ft.Icons.SPEED, size=28, color=c.primary),
+                            ft.Text("BenchLM", size=20, weight=ft.FontWeight.BOLD, color=c.on_surface),
+                        ]
+                    ),
+                    ft.Container(expand=True),
+                    ft.IconButton(icon=ft.Icons.BRIGHTNESS_6, on_click=self._toggle_theme, icon_color=c.on_surface_variant),
+                    ft.IconButton(icon=ft.Icons.FULLSCREEN, on_click=self._toggle_fullscreen, icon_color=c.on_surface_variant),
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            ),
+            padding=ft.Padding.symmetric(horizontal=24, vertical=16),
+            bgcolor=c.glass_bg,
+            border=ft.Border.only(bottom=ft.BorderSide(1, c.glass_border)),
+            blur=ft.Blur(10, 10, ft.BlurTileMode.CLAMP),
         )
 
         # Responsive Layout
-        self._main_layout = ft.Row(
+        self._main_layout = ft.Column(
             controls=[
-                # Navigation Rail (shown on desktop)
-                ft.Container(
-                    content=self._navigation_rail,
-                    visible=self.page.width >= 900,
-                    width=72,
-                ),
-                # Vertical divider
-                ft.VerticalDivider(width=1, thickness=1, color=c.outline_variant, visible=self.page.width >= 900),
-                # Page content
-                ft.Container(
-                    content=self._page_content,
+                desktop_header,
+                ft.Row(
+                    controls=[
+                        # Navigation Rail (shown on desktop)
+                        ft.Container(
+                            content=self._navigation_rail,
+                            visible=self.page.width >= 900,
+                            width=80,
+                            bgcolor=c.surface,
+                            shadow=ft.BoxShadow(spread_radius=0, blur_radius=16, color=c.shadow, offset=ft.Offset(4, 0))
+                        ),
+                        # Page content
+                        ft.Container(
+                            content=self._page_content,
+                            expand=True,
+                        ),
+                    ],
                     expand=True,
-                    padding=ft.padding.all(24),
-                ),
+                    spacing=0,
+                )
             ],
             expand=True,
             spacing=0,
@@ -290,8 +264,26 @@ class BenchLMApplication:
         self.page.appbar = self._app_bar
         self.page.add(self._main_layout)
 
+        # Resize handler
+        self.page.on_resize = self._on_page_resize
+
         # Initial navigation
         self.page.go("/dashboard")
+
+    def _on_page_resize(self, e):
+        """Handle window resize for responsive layout."""
+        is_desktop = self.page.width >= 900
+        
+        # Update rail visibility
+        rail_container = self._main_layout.controls[1].controls[0]
+        if rail_container.visible != is_desktop:
+            rail_container.visible = is_desktop
+            
+        # Update mobile appbar visibility
+        if self._app_bar.visible == is_desktop:
+            self._app_bar.visible = not is_desktop
+            
+        self.page.update()
 
     async def _on_route_change(self, e: ft.RouteChangeEvent):
         """Handle route changes."""
@@ -403,33 +395,57 @@ class BenchLMApplication:
         index = route_index.get(route, 0)
         self._navigation_rail.selected_index = index
         self._navigation_drawer.selected_index = index
-        self._navigation_rail.update()
-        self._navigation_drawer.update()
+        try:
+            self._navigation_rail.update()
+        except RuntimeError:
+            pass
+            
+        try:
+            self._navigation_drawer.update()
+        except RuntimeError:
+            pass
 
     async def _transition_page(self, new_page: ft.Control):
-        """Animate page transition."""
+        """Animate page transition smoothly with fade & scale."""
         old_content = self._page_content.content
 
         # Fade out
         if old_content:
+            # Prepare new page scale and opacity
+            new_container = ft.Container(
+                content=new_page, 
+                opacity=0, 
+                scale=ft.Scale(0.95),
+                animate_opacity=ft.Animation(300, ft.AnimationCurve.EASE_OUT),
+                animate_scale=ft.Animation(300, ft.AnimationCurve.EASE_OUT_BACK)
+            )
+            old_container = ft.Container(
+                content=old_content, 
+                opacity=1, 
+                scale=ft.Scale(1),
+                animate_opacity=ft.Animation(200, ft.AnimationCurve.EASE_IN)
+            )
+            
             self._page_content.content = ft.Stack(
-                controls=[
-                    ft.Container(content=old_content, opacity=1, animate_opacity=200),
-                    ft.Container(content=new_page, opacity=0, animate_opacity=200),
-                ]
+                controls=[old_container, new_container]
             )
             self._page_content.update()
 
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0.05)
 
-            self._page_content.content.controls[0].opacity = 0
-            self._page_content.content.controls[1].opacity = 1
+            old_container.opacity = 0
+            new_container.opacity = 1
+            new_container.scale = ft.Scale(1.0)
             self._page_content.update()
 
-            await asyncio.sleep(0.2)
-
-        self._page_content.content = new_page
-        self._page_content.update()
+            await asyncio.sleep(0.3)
+            
+            # Remove stack after animation
+            self._page_content.content = new_page
+            self._page_content.update()
+        else:
+            self._page_content.content = new_page
+            self._page_content.update()
 
     def _toggle_theme(self, _):
         """Toggle dark/light theme."""
@@ -437,6 +453,16 @@ class BenchLMApplication:
         apply_theme_to_page(self.page, self._theme)
         self._config.ui.theme = "dark" if self._theme.dark_mode else "light"
         self._config.to_yaml("config.yaml")
+        
+        # We need to manually update some parts that depend on theme colors
+        self.page.controls.clear()
+        self._build_ui()
+        
+        if self._current_page in self._pages:
+            # Re-mount current page to apply new theme colors
+            page_instance = self._pages[self._current_page]
+            self._page_content.content = page_instance
+            
         self.page.update()
 
     def _toggle_fullscreen(self, _):
@@ -454,7 +480,7 @@ class BenchLMApplication:
         await close_database()
 
 
-async def main(page: ft.Page):
+async def app_main(page: ft.Page):
     """Main entry point for Flet app."""
     app = BenchLMApplication(page)
 
@@ -468,10 +494,10 @@ async def main(page: ft.Page):
         await app.cleanup()
 
 
-def main_sync(page: ft.Page):
-    """Synchronous wrapper for Flet."""
-    asyncio.run(main(page))
+def main():
+    """CLI entry point."""
+    ft.app(target=app_main, assets_dir="assets", view=ft.AppView.FLET_APP)
 
 
 if __name__ == "__main__":
-    ft.app(target=main_sync, assets_dir="assets", view=ft.AppView.FLET_APP)
+    main()

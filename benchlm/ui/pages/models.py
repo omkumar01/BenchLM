@@ -41,13 +41,12 @@ class ModelsPage(BasePage):
     """Models page with provider tabs and model management."""
 
     def __init__(self, page: ft.Page, **kwargs):
-        super().__init__(page, route="/models", title="Models", icon=ft.Icons.MODEL_TRAINING, **kwargs)
         self._theme = get_theme()
         self._config = get_config()
         self._selected_provider = ProviderType.OLLAMA
         self._models: List[ModelInfo] = []
         self._selected_models: set = set()
-        self._build()
+        super().__init__(page, route="/models", title="Models", icon=ft.Icons.MODEL_TRAINING, **kwargs)
 
     def _build(self):
         """Build models page UI."""
@@ -67,13 +66,13 @@ class ModelsPage(BasePage):
                 ft.Row(
                     controls=[
                         ft.FilledButton(
-                            text="Refresh",
+                            content=ft.Text("Refresh"),
                             icon=ft.Icons.REFRESH,
                             on_click=self._refresh_models,
                         ),
                         ft.Container(width=12),
                         ft.FilledButton(
-                            text="Add Model",
+                            content=ft.Text("Add Model"),
                             icon=ft.Icons.ADD,
                             on_click=self._add_model,
                             style=self._theme.button_primary_style(),
@@ -106,30 +105,30 @@ class ModelsPage(BasePage):
         self._selection_toolbar = ft.Container(
             content=ft.Row(
                 controls=[
-                    ft.Text("0 selected", size=14, weight=ft.FontWeight.MEDIUM, color=c.on_surface),
+                    ft.Text("0 selected", size=14, weight=ft.FontWeight.W_500, color=c.on_surface),
                     ft.Container(expand=True),
                     ft.FilledButton(
-                        text="Benchmark Selected",
+                        content=ft.Text("Benchmark Selected"),
                         icon=ft.Icons.PLAY_ARROW,
                         on_click=self._benchmark_selected,
                         disabled=True,
                     ),
                     ft.Container(width=8),
                     ft.OutlinedButton(
-                        text="Compare",
+                        content=ft.Text("Compare"),
                         icon=ft.Icons.COMPARE_ARROWS,
                         on_click=self._compare_selected,
                         disabled=True,
                     ),
                     ft.Container(width=8),
                     ft.TextButton(
-                        text="Clear Selection",
+                        content=ft.Text("Clear Selection"),
                         on_click=self._clear_selection,
                     ),
                 ],
                 alignment=ft.MainAxisAlignment.END,
             ),
-            padding=ft.padding.symmetric(horizontal=16, vertical=12),
+            padding=ft.Padding.symmetric(horizontal=16, vertical=12),
             bgcolor=c.primary_container,
             border_radius=ft.border_radius.only(top_left=12, top_right=12),
             visible=False,
