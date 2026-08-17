@@ -55,6 +55,7 @@ class TableConfig:
     on_row_click: Optional[Callable[[dict], None]] = None
     on_selection_change: Optional[Callable[[list[dict]], None]] = None
     on_sort: Optional[Callable[[str, SortDirection], None]] = None
+    on_row_action: Optional[Callable[[dict, str], None]] = None
 
 
 class VirtualizedTable(ft.Container):
@@ -125,15 +126,41 @@ class VirtualizedTable(ft.Container):
                 else:
                     value = str(value)
 
+                if col_cfg.key == "actions":
+                    cell_content = ft.PopupMenuButton(
+                        icon=ft.Icons.MORE_VERT,
+                        items=[
+                            ft.PopupMenuItem(
+                                content="Benchmark",
+                                icon=ft.Icons.PLAY_ARROW,
+                                on_click=lambda e, data=row_data: self._handle_row_action(data, "benchmark"),
+                            ),
+                            ft.PopupMenuItem(
+                                content="Compare",
+                                icon=ft.Icons.COMPARE_ARROWS,
+                                on_click=lambda e, data=row_data: self._handle_row_action(data, "compare"),
+                            ),
+                            ft.PopupMenuItem(
+                                content="Details",
+                                icon=ft.Icons.INFO_OUTLINE,
+                                on_click=lambda e, data=row_data: self._handle_row_action(data, "details"),
+                            ),
+                        ],
+                    )
+                    on_tap = None
+                else:
+                    cell_content = ft.Text(
+                        value,
+                        size=13,
+                        color=c.on_surface,
+                        overflow=ft.TextOverflow.ELLIPSIS,
+                    )
+                    on_tap = lambda e, data=row_data: self._handle_row_click(data) if cfg.on_row_click else None
+
                 cells.append(
                     ft.DataCell(
-                        ft.Text(
-                            value,
-                            size=13,
-                            color=c.on_surface,
-                            overflow=ft.TextOverflow.ELLIPSIS,
-                        ),
-                        on_tap=lambda e, data=row_data: self._handle_row_click(data) if cfg.on_row_click else None,
+                        cell_content,
+                        on_tap=on_tap,
                     )
                 )
 
@@ -141,7 +168,7 @@ class VirtualizedTable(ft.Container):
                 ft.DataRow(
                     cells=cells,
                     selected=idx in self._selected_rows,
-                    on_select_changed=lambda e, idx=idx: self._handle_selection(idx, e.control.selected)
+                    on_select_change=lambda e, idx=idx: self._handle_selection(idx, e.control.selected)
                     if cfg.selectable else None,
                     color={
                         ft.ControlState.HOVERED: c.surface_container_high if cfg.hoverable else None,
@@ -268,14 +295,37 @@ class VirtualizedTable(ft.Container):
                 value = str(value)
 
             width = col_cfg.width or 150
+            if col_cfg.key == "actions":
+                cell_content = ft.PopupMenuButton(
+                    icon=ft.Icons.MORE_VERT,
+                    items=[
+                        ft.PopupMenuItem(
+                            content="Benchmark",
+                            icon=ft.Icons.PLAY_ARROW,
+                            on_click=lambda e, data=row_data: self._handle_row_action(data, "benchmark"),
+                        ),
+                        ft.PopupMenuItem(
+                            content="Compare",
+                            icon=ft.Icons.COMPARE_ARROWS,
+                            on_click=lambda e, data=row_data: self._handle_row_action(data, "compare"),
+                        ),
+                        ft.PopupMenuItem(
+                            content="Details",
+                            icon=ft.Icons.INFO_OUTLINE,
+                            on_click=lambda e, data=row_data: self._handle_row_action(data, "details"),
+                        ),
+                    ],
+                )
+            else:
+                cell_content = ft.Text(
+                    value,
+                    size=13,
+                    color=c.on_surface,
+                    overflow=ft.TextOverflow.ELLIPSIS,
+                )
             cells.append(
                 ft.Container(
-                    content=ft.Text(
-                        value,
-                        size=13,
-                        color=c.on_surface,
-                        overflow=ft.TextOverflow.ELLIPSIS,
-                    ),
+                    content=cell_content,
                     width=width,
                     height=cfg.row_height,
                     alignment=ft.Alignment.CENTER_LEFT,
@@ -312,6 +362,11 @@ class VirtualizedTable(ft.Container):
         """Handle row click."""
         if self.config.on_row_click:
             self.config.on_row_click(row_data)
+
+    def _handle_row_action(self, row_data: dict, action: str):
+        """Handle row action button clicks."""
+        if self.config.on_row_action:
+            self.config.on_row_action(row_data, action)
 
     def _handle_selection(self, idx: int, selected: bool):
         """Handle row selection."""

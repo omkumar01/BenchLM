@@ -397,6 +397,7 @@ class LiveMonitorPage(BasePage):
     async def _monitor_loop(self):
         """Background monitoring loop."""
         interval = self._config.ui.hardware_poll_interval / 1000
+        self._interval = interval
 
         while self._running:
             try:
@@ -433,7 +434,7 @@ class LiveMonitorPage(BasePage):
         self._metrics_cards["tpot"].value = f"{tpot:.1f}"
 
         # Elapsed time
-        elapsed = len(self._tps_history) * interval
+        elapsed = len(self._tps_history) * self._interval
         mins = int(elapsed // 60)
         secs = int(elapsed % 60)
         self._metrics_cards["elapsed"].value = f"{mins:02d}:{secs:02d}"

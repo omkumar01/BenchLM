@@ -392,7 +392,7 @@ class BenchLMApplication:
             self._pages[route] = page_instance
             return page_instance, True
 
-        return None
+        return None, False
 
     def _update_navigation_selection(self, route: str):
         """Update navigation selection based on route."""

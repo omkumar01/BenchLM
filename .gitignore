@@ -83,3 +83,6 @@ temp/
 
 # Mock/debug Testing files
 _*
+
+# Mimosa files zcode
+.mimosa/
