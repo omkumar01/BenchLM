@@ -2,11 +2,7 @@ name: BenchLM CI/CD
 
 on:
   push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
-  release:
-    types: [published]
+    tags: ["v*"]
 
 env:
   PYTHON_VERSION: "3.13"
