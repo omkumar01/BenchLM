@@ -11,6 +11,7 @@ from benchlm.ui.widgets import (
     FormFieldType,
     SelectField,
     ToggleField,
+    TabBar,
     SliderField,
     ColorPickerField,
     FilePickerField,
@@ -65,16 +66,16 @@ class SettingsPage(BasePage):
         )
 
         # Settings Tabs
-        self._tabs = ft.Tabs(
+        self._tabs = TabBar(
             tabs=[
-                ft.Tab(text="General", icon=ft.Icons.SETTINGS),
-                ft.Tab(text="Appearance", icon=ft.Icons.PALETTE),
-                ft.Tab(text="Providers", icon=ft.Icons.CLOUD),
-                ft.Tab(text="Benchmark", icon=ft.Icons.SPEED),
-                ft.Tab(text="Quality", icon=ft.Icons.VERIFIED),
-                ft.Tab(text="Hardware", icon=ft.Icons.MEMORY),
-                ft.Tab(text="Exports", icon=ft.Icons.DOWNLOAD),
-                ft.Tab(text="Advanced", icon=ft.Icons.TUNE),
+                ft.Tab(label="General", icon=ft.Icons.SETTINGS),
+                ft.Tab(label="Appearance", icon=ft.Icons.PALETTE),
+                ft.Tab(label="Providers", icon=ft.Icons.CLOUD),
+                ft.Tab(label="Benchmark", icon=ft.Icons.SPEED),
+                ft.Tab(label="Quality", icon=ft.Icons.VERIFIED),
+                ft.Tab(label="Hardware", icon=ft.Icons.MEMORY),
+                ft.Tab(label="Exports", icon=ft.Icons.DOWNLOAD),
+                ft.Tab(label="Advanced", icon=ft.Icons.TUNE),
             ],
             selected_index=0,
             on_change=self._on_tab_change,
@@ -657,7 +658,7 @@ class SettingsPage(BasePage):
                             ft.Container(height=16),
                             ft.FilledButton(content=ft.Text("Clear All Benchmark Data"), icon=ft.Icons.DELETE_FOREVER, on_click=self._clear_all_data, style=ft.ButtonStyle(bgcolor=c.danger)),
                             ft.Container(height=8),
-                            ft.FilledButton(content=ft.Text("Reset All Settings"), icon=ft.Icons.FACTORY_RESET, on_click=self._reset_defaults, style=ft.ButtonStyle(bgcolor=c.warning)),
+                            ft.FilledButton(content=ft.Text("Reset All Settings"), icon=ft.Icons.RESTART_ALT, on_click=self._reset_defaults, style=ft.ButtonStyle(bgcolor=c.warning)),
                         ],
                     ),
                 ),

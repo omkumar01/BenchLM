@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from benchlm.ui.pages.base import BasePage
 from benchlm.ui.widgets import (
     GlassCard,
+    TabBar,
     FormField,
     FormFieldConfig,
     NumberField,
@@ -69,12 +70,12 @@ class BenchmarkPage(BasePage):
         )
 
         # Configuration Tabs
-        self._config_tabs = ft.Tabs(
+        self._config_tabs = TabBar(
             tabs=[
-                ft.Tab(text="Generation", icon=ft.Icons.SETTINGS),
-                ft.Tab(text="Execution", icon=ft.Icons.PLAY_CIRCLE),
-                ft.Tab(text="Prompts", icon=ft.Icons.ARTICLE),
-                ft.Tab(text="Advanced", icon=ft.Icons.TUNE),
+                ft.Tab(label="Generation", icon=ft.Icons.SETTINGS),
+                ft.Tab(label="Execution", icon=ft.Icons.PLAY_CIRCLE),
+                ft.Tab(label="Prompts", icon=ft.Icons.ARTICLE),
+                ft.Tab(label="Advanced", icon=ft.Icons.TUNE),
             ],
             selected_index=0,
             on_change=self._on_tab_change,

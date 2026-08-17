@@ -209,7 +209,13 @@ class NavigationDrawer(ft.NavigationDrawer):
 
 
 class TabBar(ft.Tabs):
-    """Custom tab bar with theming."""
+    """Custom tab bar with theming.
+
+    Flet 0.8x replaced the old ``ft.Tabs(tabs=[...])`` list API with a
+    composed control: ``ft.Tabs(length=N, content=Column([ft.TabBar(...)]))``.
+    This wrapper keeps the classic header-only tab-bar interface the pages
+    use (selection bar + external content swap in on_change).
+    """
 
     def __init__(
         self,
@@ -226,16 +232,24 @@ class TabBar(ft.Tabs):
         self._theme = get_theme()
         c = self._theme.colors
 
-        super().__init__(
+        self._bar = ft.TabBar(
             tabs=tabs,
-            selected_index=selected_index,
-            on_change=lambda e: on_change(e.control.selected_index) if on_change else None,
             scrollable=scrollable,
             divider_color=divider_color or c.outline_variant,
             indicator_color=indicator_color or c.primary,
             label_color=label_color or c.on_surface,
             unselected_label_color=unselected_label_color or c.on_surface_disabled,
             overlay_color=ft.Colors.TRANSPARENT,
+        )
+
+        super().__init__(
+            length=len(tabs),
+            selected_index=selected_index,
+            on_change=(
+                lambda e: on_change(getattr(e.control, "selected_index", 0))
+                if on_change else None
+            ),
+            content=self._bar,
             **kwargs
         )
 

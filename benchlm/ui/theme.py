@@ -47,13 +47,13 @@ class Colors:
         # Outline
         "outline": "#334155",          # slate-700
         "outline_variant": "#1E293B",  # slate-800
-        # Glassmorphism
-        "glass_bg": "rgba(12, 12, 22, 0.65)",      # surface with alpha
-        "glass_border": "rgba(129, 140, 248, 0.15)",  # Primary tinted outline with alpha
-        "glass_highlight": "rgba(255, 255, 255, 0.08)",
+        # Glassmorphism (hex with alpha - the Flet client cannot parse CSS rgba())
+        "glass_bg": "#A60C0C16",           # surface with 65% alpha
+        "glass_border": "#26818CF8",       # primary tinted outline, 15% alpha
+        "glass_highlight": "#14FFFFFF",    # white highlight, 8% alpha
         # Shadow
-        "shadow": "rgba(0, 0, 0, 0.5)",
-        "shadow_strong": "rgba(0, 0, 0, 0.7)",
+        "shadow": "#80000000",             # black, 50% alpha
+        "shadow_strong": "#B3000000",      # black, 70% alpha
     }
 
     # Light mode - Clean, crisp white with vibrant accents
@@ -92,13 +92,13 @@ class Colors:
         # Outline
         "outline": "#CBD5E1",          # slate-300
         "outline_variant": "#E2E8F0",  # slate-200
-        # Glassmorphism
-        "glass_bg": "rgba(255, 255, 255, 0.75)",
-        "glass_border": "rgba(79, 70, 229, 0.15)",
-        "glass_highlight": "rgba(255, 255, 255, 0.5)",
+        # Glassmorphism (hex with alpha)
+        "glass_bg": "#BFFFFFFF",
+        "glass_border": "#264F46E5",
+        "glass_highlight": "#80FFFFFF",
         # Shadow
-        "shadow": "rgba(0, 0, 0, 0.08)",
-        "shadow_strong": "rgba(0, 0, 0, 0.12)",
+        "shadow": "#14000000",
+        "shadow_strong": "#1F000000",
     }
 
 
@@ -224,9 +224,9 @@ class ThemeBorderRadius:
 @dataclass
 class ThemeTypography:
     """Typography scale."""
-    # Premium Modern Fonts
-    font_family: str = "Outfit, system-ui, -apple-system, sans-serif"
-    font_family_mono: str = "JetBrains Mono, monospace"
+    # System default fonts (register real font files via page.fonts to customize)
+    font_family: str = "Outfit"
+    font_family_mono: str = "JetBrains Mono"
 
     display_large: int = 64
     display_medium: int = 52
@@ -354,28 +354,14 @@ class BenchLMTheme:
             inverse_primary=c.primary_container,
         )
 
-        text_theme = ft.TextTheme(
-            display_large=ft.TextStyle(size=t.display_large, weight=t.weight_thin, font_family=t.font_family, color=c.on_background),
-            display_medium=ft.TextStyle(size=t.display_medium, weight=t.weight_thin, font_family=t.font_family, color=c.on_background),
-            display_small=ft.TextStyle(size=t.display_small, weight=t.weight_regular, font_family=t.font_family, color=c.on_background),
-            headline_large=ft.TextStyle(size=t.headline_large, weight=t.weight_regular, font_family=t.font_family, color=c.on_background),
-            headline_medium=ft.TextStyle(size=t.headline_medium, weight=t.weight_semibold, font_family=t.font_family, color=c.on_background),
-            headline_small=ft.TextStyle(size=t.headline_small, weight=t.weight_semibold, font_family=t.font_family, color=c.on_background),
-            title_large=ft.TextStyle(size=t.title_large, weight=t.weight_semibold, font_family=t.font_family, color=c.on_background),
-            title_medium=ft.TextStyle(size=t.title_medium, weight=t.weight_semibold, font_family=t.font_family, color=c.on_background),
-            title_small=ft.TextStyle(size=t.title_small, weight=t.weight_semibold, font_family=t.font_family, color=c.on_background),
-            label_large=ft.TextStyle(size=t.label_large, weight=t.weight_semibold, font_family=t.font_family, color=c.on_background),
-            label_medium=ft.TextStyle(size=t.label_medium, weight=t.weight_medium, font_family=t.font_family, color=c.on_background),
-            label_small=ft.TextStyle(size=t.label_small, weight=t.weight_regular, font_family=t.font_family, color=c.on_background),
-            body_large=ft.TextStyle(size=t.body_large, weight=t.weight_regular, font_family=t.font_family, color=c.on_background),
-            body_medium=ft.TextStyle(size=t.body_medium, weight=t.weight_regular, font_family=t.font_family, color=c.on_background),
-            body_small=ft.TextStyle(size=t.body_small, weight=t.weight_regular, font_family=t.font_family, color=c.on_background),
-        )
+        # NOTE: text_theme omitted - see comment at the Theme construction below.
 
+        # NOTE: text_theme is intentionally omitted. The Flet 0.86.5 desktop
+        # client stops rendering (blank gray window) when a Theme carries both
+        # color_scheme and a populated text_theme. Text styles are applied
+        # per-control instead; see ThemeTypography for the scale.
         return ft.Theme(
             color_scheme=color_scheme,
-            text_theme=text_theme,
-            font_family=t.font_family,
             use_material3=True,
             page_transitions=ft.PageTransitionsTheme(
                 windows=ft.PageTransitionTheme.FADE_UPWARDS,
@@ -480,7 +466,6 @@ class BenchLMTheme:
             "border_radius": self.border_radius.input,
             "border_color": c.outline,
             "focused_border_color": c.primary,
-            "focused_bgcolor": c.surface,
             "color": c.on_surface,
             "cursor_color": c.primary,
             "selection_color": c.primary_container,
@@ -556,10 +541,4 @@ def apply_theme_to_page(page: ft.Page, theme: BenchLMTheme | None = None) -> Non
     page.theme_mode = ft.ThemeMode.DARK if theme.dark_mode else ft.ThemeMode.LIGHT
     page.bgcolor = theme.colors.background
     page.padding = theme.spacing.page_padding
-    
-    # Preload premium fonts
-    page.fonts = {
-        "Outfit": "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap",
-        "JetBrains Mono": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap",
-    }
     page.update()

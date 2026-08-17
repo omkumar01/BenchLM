@@ -198,7 +198,7 @@ class VirtualizedTable(ft.Container):
                 spacing=0,
             ),
             bgcolor=c.surface_container,
-            border_radius=ft.border_radius.only(top_left=8, top_right=8),
+            border_radius=ft.BorderRadius.only(top_left=8, top_right=8),
         )
 
         # Virtualized body using ListView
@@ -223,7 +223,7 @@ class VirtualizedTable(ft.Container):
                     content=self._list_view,
                     expand=True,
                     border=ft.Border.all(1, c.outline_variant),
-                    border_radius=ft.border_radius.only(bottom_left=8, bottom_right=8),
+                    border_radius=ft.BorderRadius.only(bottom_left=8, bottom_right=8),
                 ),
             ],
             spacing=0,
@@ -377,7 +377,9 @@ class VirtualizedTable(ft.Container):
         return self._data
 
     @data.setter
-    def data(self, value: list[dict]):
+    def data(self, value: list[dict] | None):
+        # Flet's generated control __init__ assigns None for unset fields
+        value = value or []
         self._data = value
         self._filtered_data = value.copy()
         self._apply_sort()
@@ -389,7 +391,11 @@ class VirtualizedTable(ft.Container):
             self._render_visible_rows()
         else:
             self.content = self._build_data_table()
-            self.update()
+            # update() only when attached to a page (safe during construction)
+            try:
+                self.update()
+            except (RuntimeError, AttributeError):
+                pass
 
     def filter(self, filter_fn: Callable[[dict], bool]):
         """Filter data."""
@@ -537,10 +543,10 @@ class PaginatedTable(VirtualizedTable):
                 value=str(self.config.page_size),
                 options=[ft.dropdown.Option(str(s)) for s in self.page_sizes],
                 width=80,
-                on_change=lambda e: self._change_page_size(int(e.control.value)),
                 border_color=c.outline,
                 focused_border_color=c.primary,
             )
+            page_size_control.on_select = lambda e: self._change_page_size(int(e.control.value))
 
         # Page navigation
         self._prev_btn = ft.IconButton(

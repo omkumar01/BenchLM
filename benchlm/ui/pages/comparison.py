@@ -53,7 +53,7 @@ class ComparisonPage(BasePage):
                         SegmentedButton(
                             options=[
                                 ("overlay", "Overlay", ft.Icons.LAYERS),
-                                ("side_by_side", "Side-by-Side", ft.Icons.VIEW_SIDE),
+                                ("side_by_side", "Side-by-Side", ft.Icons.VIEW_COLUMN),
                                 ("radar", "Radar", ft.Icons.RADAR),
                                 ("diff", "Diff", ft.Icons.COMPARE),
                                 ("ranking", "Ranking", ft.Icons.LEADERBOARD),
@@ -160,7 +160,7 @@ class ComparisonPage(BasePage):
                             ft.Container(height=4),
                             self._build_compact_metric("VRAM", vram, ft.Icons.MEMORY, c.warning),
                             ft.Container(height=4),
-                            self._build_compact_metric("Quality", acc, ft.Icons.TARGET, c.tertiary),
+                            self._build_compact_metric("Quality", acc, ft.Icons.TRACK_CHANGES, c.tertiary),
                         ],
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     ),

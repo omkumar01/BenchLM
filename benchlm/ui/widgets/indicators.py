@@ -153,13 +153,20 @@ class StatusIndicator(ft.Container):
 
         dot_color = status_colors.get(status, c.on_surface_disabled)
 
+        # Guards: children may not be attached to the page yet (on_mount races)
+        def _safe_update(ctrl):
+            try:
+                ctrl.update()
+            except RuntimeError:
+                pass  # not attached yet; property change applies on next parent update
+
         if self._dot:
             self._dot.bgcolor = dot_color
-            self._dot.update()
+            _safe_update(self._dot)
 
         if self._label:
             self._label.value = cfg.label or status.title()
-            self._label.update()
+            _safe_update(self._label)
 
         # Handle pulse animation
         if status == "running" and cfg.animated:

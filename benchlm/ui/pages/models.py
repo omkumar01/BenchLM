@@ -130,7 +130,7 @@ class ModelsPage(BasePage):
             ),
             padding=ft.Padding.symmetric(horizontal=16, vertical=12),
             bgcolor=c.primary_container,
-            border_radius=ft.border_radius.only(top_left=12, top_right=12),
+            border_radius=ft.BorderRadius.only(top_left=12, top_right=12),
             visible=False,
         )
 

@@ -51,7 +51,7 @@ class CPUCollector:
 
     async def initialize(self):
         """Initialize CPU collector."""
-        self._cpu_info = await self._get_cpu_info()
+        self._cpu_info = self._get_cpu_info()
 
     def _get_cpu_info(self) -> CPUInfo:
         """Get static CPU information."""

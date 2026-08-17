@@ -226,7 +226,7 @@ class BenchLMApplication:
                         # Navigation Rail (shown on desktop)
                         ft.Container(
                             content=self._navigation_rail,
-                            visible=self.page.width >= 900,
+                            visible=self._is_desktop_layout(),
                             width=80,
                             bgcolor=c.surface,
                             shadow=ft.BoxShadow(spread_radius=0, blur_radius=16, color=c.shadow, offset=ft.Offset(4, 0))
@@ -249,7 +249,7 @@ class BenchLMApplication:
         self._app_bar = ft.AppBar(
             leading=ft.IconButton(
                 icon=ft.Icons.MENU,
-                on_click=lambda _: self.page.open(self._navigation_drawer),
+                on_click=self._open_drawer,
             ),
             title=ft.Text("BenchLM", weight=ft.FontWeight.BOLD),
             bgcolor=c.surface,
@@ -257,22 +257,29 @@ class BenchLMApplication:
                 ft.IconButton(icon=ft.Icons.BRIGHTNESS_6, on_click=self._toggle_theme),
                 ft.IconButton(icon=ft.Icons.FULLSCREEN, on_click=self._toggle_fullscreen),
             ],
-            visible=self.page.width < 900,
+            visible=not self._is_desktop_layout(),
         )
 
         # Main page structure
         self.page.appbar = self._app_bar
+        self.page.drawer = self._navigation_drawer
         self.page.add(self._main_layout)
 
         # Resize handler
         self.page.on_resize = self._on_page_resize
 
-        # Initial navigation
-        self.page.go("/dashboard")
+        # Initial navigation - honor the route the client connected with
+        asyncio.get_event_loop().create_task(
+            self._handle_route((self.page.route or "/dashboard").split("?")[0])
+        )
+
+    def _is_desktop_layout(self) -> bool:
+        """Width is None until the client reports window metrics."""
+        return (self.page.width or 0) >= 900
 
     def _on_page_resize(self, e):
         """Handle window resize for responsive layout."""
-        is_desktop = self.page.width >= 900
+        is_desktop = self._is_desktop_layout()
         
         # Update rail visibility
         rail_container = self._main_layout.controls[1].controls[0]
@@ -285,31 +292,39 @@ class BenchLMApplication:
             
         self.page.update()
 
-    async def _on_route_change(self, e: ft.RouteChangeEvent):
-        """Handle route changes."""
-        route = e.route
-
-        # Parse route and parameters
+    async def _handle_route(self, route: str):
+        """Show the page for a route (server-side; no client round-trip)."""
         if "?" in route:
             base_route, params = route.split("?", 1)
         else:
             base_route, params = route, ""
 
         # Get or create page
-        page_control = await self._get_page(base_route, params)
+        page_control, created = await self._get_page(base_route, params)
 
         if page_control:
             # Update navigation selection
             self._update_navigation_selection(base_route)
 
-            # Animate page transition
+            # Swap the page into the content area
             await self._transition_page(page_control)
+
+            # Mount only after attachment so pages can safely call update()
+            if created:
+                await page_control.on_mount()
 
             self._current_page = base_route
 
+    async def _on_route_change(self, e: ft.RouteChangeEvent):
+        """Handle route changes from the client (URL navigation)."""
+        route = e.route
+        if isinstance(route, dict):
+            route = route.get("route", "/dashboard")
+        await self._handle_route(route or "/dashboard")
+
     def _on_view_pop(self, e: ft.ViewPopEvent):
         """Handle view pop (back navigation)."""
-        self.page.go("/dashboard")
+        asyncio.get_event_loop().create_task(self._handle_route("/dashboard"))
 
     def _on_navigation_change(self, e: ft.ControlEvent):
         """Handle navigation rail selection."""
@@ -327,9 +342,13 @@ class BenchLMApplication:
             "/settings",
         ]
         if 0 <= e.control.selected_index < len(routes):
-            self.page.go(routes[e.control.selected_index])
+            asyncio.get_event_loop().create_task(self._handle_route(routes[e.control.selected_index]))
 
-    def _on_drawer_change(self, e: ft.ControlEvent):
+    async def _open_drawer(self, _):
+        """Open the mobile navigation drawer."""
+        await self.page.show_drawer()
+
+    async def _on_drawer_change(self, e: ft.ControlEvent):
         """Handle navigation drawer selection."""
         routes = [
             "/dashboard",
@@ -345,13 +364,13 @@ class BenchLMApplication:
             "/settings",
         ]
         if 0 <= e.control.selected_index < len(routes):
-            self.page.go(routes[e.control.selected_index])
-            self.page.close(self._navigation_drawer)
+            await self._handle_route(routes[e.control.selected_index])
+            await self.page.close_drawer()
 
-    async def _get_page(self, route: str, params: str) -> Optional[ft.Control]:
-        """Get or create page for route."""
+    async def _get_page(self, route: str, params: str) -> tuple[Optional[ft.Control], bool]:
+        """Get or create page for route. Returns (control, newly_created)."""
         if route in self._pages:
-            return self._pages[route]
+            return self._pages[route], False
 
         # Create page based on route
         page_map = {
@@ -370,9 +389,8 @@ class BenchLMApplication:
 
         if route in page_map:
             page_instance = page_map[route]()
-            await page_instance.on_mount()
             self._pages[route] = page_instance
-            return page_instance
+            return page_instance, True
 
         return None
 
@@ -406,63 +424,30 @@ class BenchLMApplication:
             pass
 
     async def _transition_page(self, new_page: ft.Control):
-        """Animate page transition smoothly with fade & scale."""
-        old_content = self._page_content.content
+        """Swap the visible page; the entry animation lives on BasePage.
 
-        # Fade out
-        if old_content:
-            # Prepare new page scale and opacity
-            new_container = ft.Container(
-                content=new_page, 
-                opacity=0, 
-                scale=ft.Scale(0.95),
-                animate_opacity=ft.Animation(300, ft.AnimationCurve.EASE_OUT),
-                animate_scale=ft.Animation(300, ft.AnimationCurve.EASE_OUT_BACK)
-            )
-            old_container = ft.Container(
-                content=old_content, 
-                opacity=1, 
-                scale=ft.Scale(1),
-                animate_opacity=ft.Animation(200, ft.AnimationCurve.EASE_IN)
-            )
-            
-            self._page_content.content = ft.Stack(
-                controls=[old_container, new_container]
-            )
-            self._page_content.update()
-
-            await asyncio.sleep(0.05)
-
-            old_container.opacity = 0
-            new_container.opacity = 1
-            new_container.scale = ft.Scale(1.0)
-            self._page_content.update()
-
-            await asyncio.sleep(0.3)
-            
-            # Remove stack after animation
-            self._page_content.content = new_page
-            self._page_content.update()
-        else:
-            self._page_content.content = new_page
-            self._page_content.update()
+        The old wrapper-Stack fade choreography confused the Flet client's
+        animation state (pages stayed invisible after navigation), so the
+        swap is now a single content change - BasePage.on_mount animates
+        opacity 0 -> 1 with its own animate_opacity.
+        """
+        self._page_content.content = new_page
+        self._page_content.update()
 
     def _toggle_theme(self, _):
         """Toggle dark/light theme."""
         self._theme.toggle_dark_mode()
         apply_theme_to_page(self.page, self._theme)
-        self._config.ui.theme = "dark" if self._theme.dark_mode else "light"
-        self._config.to_yaml("config.yaml")
-        
+
         # We need to manually update some parts that depend on theme colors
         self.page.controls.clear()
         self._build_ui()
-        
+
         if self._current_page in self._pages:
             # Re-mount current page to apply new theme colors
             page_instance = self._pages[self._current_page]
             self._page_content.content = page_instance
-            
+
         self.page.update()
 
     def _toggle_fullscreen(self, _):
@@ -484,14 +469,19 @@ async def app_main(page: ft.Page):
     """Main entry point for Flet app."""
     app = BenchLMApplication(page)
 
+    # Flet keeps the session alive while the client is connected;
+    # main() must return after initialization so the initial page
+    # patch is flushed to the client.
+    async def _cleanup(_=None):
+        await app.cleanup()
+
+    page.on_disconnect = _cleanup
+
     try:
         await app.initialize()
-        # Keep app running
-        await asyncio.Event().wait()
-    except KeyboardInterrupt:
-        pass
-    finally:
+    except Exception:
         await app.cleanup()
+        raise
 
 
 def main():

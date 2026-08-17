@@ -53,7 +53,7 @@ class UIConfig(BaseSettings):
 class BenchmarkConfig(BaseSettings):
     """Benchmark execution configuration."""
 
-    model_config = SettingsConfigDict(env_prefix="BENCHLM_BENCHMARK_", extra="ignore")
+    model_config = SettingsConfigDict(env_prefix="BENCHLM_BENCHMARK_", env_file=".env", extra="ignore")
 
     default_preset: str = "standard"
     default_provider: Literal["ollama", "llama_cpp", "lmstudio", "vllm", "openai_compatible"] = "ollama"

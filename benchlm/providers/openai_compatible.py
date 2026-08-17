@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime
 import time
 from typing import Any, AsyncIterator, List, Optional, Dict
 
@@ -314,6 +315,7 @@ class OpenAICompatibleProvider(LLMProvider):
                                 yield TokenEvent(
                                     token_id=token_index,
                                     token_text=delta,
+                                    timestamp=datetime.now(),
                                     is_first_token=first_token,
                                     is_last_token=choices[0].get("finish_reason") is not None,
                                 )
@@ -378,6 +380,7 @@ class OpenAICompatibleProvider(LLMProvider):
                                 yield TokenEvent(
                                     token_id=token_index,
                                     token_text=content,
+                                    timestamp=datetime.now(),
                                     is_first_token=first_token,
                                     is_last_token=choices[0].get("finish_reason") is not None,
                                 )

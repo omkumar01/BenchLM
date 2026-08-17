@@ -41,7 +41,7 @@ benchmark:
   default_provider: "ollama"
   ollama_host: "http://localhost:11434"
   llama_cpp_host: "http://localhost:8080"
-  lmstudio_host: "http://localhost:1234"
+  lmstudio_host: "http://172.29.32.1:1234"
   vllm_host: "http://localhost:8000"
 
   # Generation parameters

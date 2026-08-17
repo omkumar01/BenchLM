@@ -65,19 +65,19 @@ class ResultsPage(BasePage):
         # Tabs
         self._tabs = TabBar(
             tabs=[
-                ft.Tab(text="Summary", icon=ft.Icons.SUMMARIZE),
-                ft.Tab(text="Latency", icon=ft.Icons.TIMER),
-                ft.Tab(text="Throughput", icon=ft.Icons.SPEED),
-                ft.Tab(text="Memory", icon=ft.Icons.MEMORY),
-                ft.Tab(text="CPU/GPU", icon=ft.Icons.MONITOR_CHART),
-                ft.Tab(text="Thermal", icon=ft.Icons.THERMOSTAT),
-                ft.Tab(text="Context", icon=ft.Icons.ARROW_RANGE),
-                ft.Tab(text="Concurrency", icon=ft.Icons.GROUPS),
-                ft.Tab(text="Quality", icon=ft.Icons.VERIFIED),
-                ft.Tab(text="Reliability", icon=ft.Icons.SHIELD),
-                ft.Tab(text="Statistics", icon=ft.Icons.ANALYTICS),
-                ft.Tab(text="Raw Samples", icon=ft.Icons.TABLE_VIEW),
-                ft.Tab(text="Export", icon=ft.Icons.DOWNLOAD),
+                ft.Tab(label="Summary", icon=ft.Icons.SUMMARIZE),
+                ft.Tab(label="Latency", icon=ft.Icons.TIMER),
+                ft.Tab(label="Throughput", icon=ft.Icons.SPEED),
+                ft.Tab(label="Memory", icon=ft.Icons.MEMORY),
+                ft.Tab(label="CPU/GPU", icon=ft.Icons.QUERY_STATS),
+                ft.Tab(label="Thermal", icon=ft.Icons.THERMOSTAT),
+                ft.Tab(label="Context", icon=ft.Icons.SWAP_HORIZ),
+                ft.Tab(label="Concurrency", icon=ft.Icons.GROUPS),
+                ft.Tab(label="Quality", icon=ft.Icons.VERIFIED),
+                ft.Tab(label="Reliability", icon=ft.Icons.SHIELD),
+                ft.Tab(label="Statistics", icon=ft.Icons.ANALYTICS),
+                ft.Tab(label="Raw Samples", icon=ft.Icons.TABLE_VIEW),
+                ft.Tab(label="Export", icon=ft.Icons.DOWNLOAD),
             ],
             selected_index=0,
             on_change=self._on_tab_change,
@@ -115,7 +115,7 @@ class ResultsPage(BasePage):
             "ttft": MetricCard(value="124ms", label="TTFT (P50)", icon=ft.Icons.TIMER, icon_color=c.primary),
             "tps": MetricCard(value="87.3", label="Output TPS", icon=ft.Icons.BOLT, icon_color=c.success, unit="tok/s"),
             "vram": MetricCard(value="6.2 GB", label="Peak VRAM", icon=ft.Icons.STORAGE, icon_color=c.warning),
-            "accuracy": MetricCard(value="81%", label="Quality Score", icon=ft.Icons.TARGET, icon_color=c.tertiary),
+            "accuracy": MetricCard(value="81%", label="Quality Score", icon=ft.Icons.TRACK_CHANGES, icon_color=c.tertiary),
         }
 
         self._summary_row = ft.Row(

@@ -54,19 +54,74 @@ class FormField(ft.Container):
         self,
         config: FormFieldConfig | None = None,
         value: str = "",
+        on_change: Optional[Callable[[str], None]] = None,
+        on_submit: Optional[Callable[[str], None]] = None,
+        on_focus: Optional[Callable] = None,
+        on_blur: Optional[Callable] = None,
         **kwargs
     ):
         self.config = config or FormFieldConfig()
         self._value = value
         self._theme = get_theme()
         self._error_shown = False
+        self._text_field: ft.TextField | None = None
+
+        if on_change is not None:
+            self.config.on_change = on_change
+        if on_submit is not None:
+            self.config.on_submit = on_submit
+        if on_focus is not None:
+            self.config.on_focus = on_focus
+        if on_blur is not None:
+            self.config.on_blur = on_blur
 
         super().__init__(**kwargs)
         self._build()
 
     def _build(self):
-        """Build form field."""
-        raise NotImplementedError
+        """Build default single-line text field."""
+        c = self._theme.colors
+        cfg = self.config
+
+        self._text_field = ft.TextField(
+            value=self._value,
+            label=cfg.label or None,
+            hint_text=cfg.hint or None,
+            helper=cfg.helper_text or None,
+            prefix=cfg.prefix or None,
+            suffix=cfg.suffix or None,
+            password=cfg.keyboard_type == ft.KeyboardType.VISIBLE_PASSWORD,
+            read_only=cfg.read_only,
+            disabled=cfg.disabled,
+            max_length=cfg.max_length,
+            keyboard_type=cfg.keyboard_type,
+            autocorrect=cfg.autocorrect,
+            capitalization=cfg.autocapitalization,
+            text_size=14,
+            label_style=ft.TextStyle(color=c.on_surface_variant, size=12),
+            hint_style=ft.TextStyle(color=c.on_surface_disabled, size=12),
+            border_color=c.outline,
+            focused_border_color=c.primary,
+            bgcolor=c.surface_variant,
+            color=c.on_surface,
+            cursor_color=c.primary,
+            selection_color=c.primary_container,
+            border_radius=8,
+            filled=True,
+            dense=True,
+            on_change=self._on_change,
+            on_submit=self._on_submit,
+            on_focus=self._on_focus,
+            on_blur=self._on_blur,
+            error=cfg.error_text or None,
+            counter_style=ft.TextStyle(color=c.on_surface_disabled, size=11),
+        )
+
+        self.content = ft.Column(
+            controls=[self._text_field],
+            spacing=0,
+            tight=True,
+        )
 
     @property
     def value(self) -> str:
@@ -118,6 +173,45 @@ class FormField(ft.Container):
         """Clear error."""
         self.set_error(None)
 
+    def _update_control_value(self):
+        if self._text_field:
+            self._text_field.value = self._value
+            self._safe_update(self._text_field)
+
+    def _update_error_display(self):
+        if self._text_field:
+            self._text_field.error = self.config.error_text or None
+            self._safe_update(self._text_field)
+
+    @staticmethod
+    def _safe_update(ctrl):
+        try:
+            ctrl.update()
+        except RuntimeError:
+            pass  # not attached to a page yet
+
+    def _on_change(self, e: ft.ControlEvent):
+        self._value = e.control.value
+        if self.config.on_change:
+            self.config.on_change(self._value)
+        # Clear error on change
+        if self._error_shown:
+            self.validate()
+
+    def _on_submit(self, e: ft.ControlEvent):
+        if self.config.on_submit:
+            self.config.on_submit(self._value)
+
+    def _on_focus(self, e: ft.ControlEvent):
+        if self.config.on_focus:
+            self.config.on_focus()
+
+    def _on_blur(self, e: ft.ControlEvent):
+        if self.config.on_blur:
+            self.config.on_blur()
+        # Validate on blur
+        self.validate()
+
 
 class TextField(FormField):
     """Text input field."""
@@ -140,14 +234,13 @@ class TextField(FormField):
             value=self._value,
             label=cfg.label or None,
             hint_text=cfg.hint or None,
-            helper_text=cfg.helper_text or None,
-            prefix_text=cfg.prefix or None,
-            suffix_text=cfg.suffix or None,
+            helper=cfg.helper_text or None,
+            prefix=cfg.prefix or None,
+            suffix=cfg.suffix or None,
             password=cfg.keyboard_type == ft.KeyboardType.VISIBLE_PASSWORD,
             read_only=cfg.read_only,
             disabled=cfg.disabled,
             max_length=cfg.max_length,
-            min_length=cfg.min_length if cfg.min_length > 0 else None,
             keyboard_type=cfg.keyboard_type,
             autocorrect=cfg.autocorrect,
             capitalization=cfg.autocapitalization,
@@ -156,7 +249,6 @@ class TextField(FormField):
             hint_style=ft.TextStyle(color=c.on_surface_disabled, size=12),
             border_color=c.outline,
             focused_border_color=c.primary,
-            focused_bgcolor=c.surface,
             bgcolor=c.surface_variant,
             color=c.on_surface,
             cursor_color=c.primary,
@@ -168,7 +260,7 @@ class TextField(FormField):
             on_submit=self._on_submit,
             on_focus=self._on_focus,
             on_blur=self._on_blur,
-            error_text=cfg.error_text or None,
+            error=cfg.error_text or None,
             counter_style=ft.TextStyle(color=c.on_surface_disabled, size=11),
         )
 
@@ -185,7 +277,7 @@ class TextField(FormField):
 
     def _update_error_display(self):
         if self._text_field:
-            self._text_field.error_text = self.config.error_text or None
+            self._text_field.error = self.config.error_text or None
             self._text_field.update()
 
     def _on_change(self, e: ft.ControlEvent):
@@ -242,14 +334,12 @@ class NumberField(FormField):
 
         decrement_btn = ft.IconButton(
             icon=ft.Icons.REMOVE,
-            icon_size=18,
             on_click=decrement,
             disabled=cfg.disabled or (cfg.min_value is not None and self._value <= cfg.min_value),
         )
 
         increment_btn = ft.IconButton(
             icon=ft.Icons.ADD,
-            icon_size=18,
             on_click=increment,
             disabled=cfg.disabled or (cfg.max_value is not None and self._value >= cfg.max_value),
         )
@@ -266,7 +356,6 @@ class NumberField(FormField):
             label_style=ft.TextStyle(color=c.on_surface_variant, size=12),
             border_color=c.outline,
             focused_border_color=c.primary,
-            focused_bgcolor=c.surface,
             bgcolor=c.surface_variant,
             color=c.on_surface,
             cursor_color=c.primary,
@@ -276,7 +365,7 @@ class NumberField(FormField):
             on_change=self._on_change,
             on_submit=self._on_submit,
             on_blur=self._on_blur,
-            error_text=cfg.error_text or None,
+            error=cfg.error_text or None,
             expand=True,
         )
 
@@ -297,7 +386,7 @@ class NumberField(FormField):
 
     def _update_error_display(self):
         if self._text_field:
-            self._text_field.error_text = self.config.error_text or None
+            self._text_field.error = self.config.error_text or None
             self._text_field.update()
 
     def _on_change(self, e: ft.ControlEvent):
@@ -361,7 +450,6 @@ class SliderField(ft.Container):
             min=self.min_value,
             max=self.max_value,
             value=self._value,
-            step=self.step,
             divisions=self.divisions,
             label="{value}" + (f" {self.unit}" if self.unit else ""),
             active_color=c.primary,
@@ -470,15 +558,15 @@ class SelectField(ft.Container):
             hint_style=ft.TextStyle(color=c.on_surface_disabled, size=12),
             border_color=c.outline,
             focused_border_color=c.primary,
-            focused_bgcolor=c.surface,
             bgcolor=c.surface_variant,
             color=c.on_surface,
             border_radius=8,
             filled=True,
             dense=True,
-            on_change=self._on_change,
             expand=True,
         )
+        # Dropdown fires on_select (not on_change) in Flet 0.8x
+        self._dropdown.on_select = self._on_change
 
         self.content = self._dropdown
 
@@ -689,7 +777,7 @@ class ColorPickerField(ft.Container):
             actions_alignment=ft.MainAxisAlignment.END,
         )
 
-        self.page.open(self._dialog)
+        self.page.show_dialog(self._dialog)
 
     def _select_color(self, color: str):
         """Select color."""
@@ -704,8 +792,8 @@ class ColorPickerField(ft.Container):
     def _close_dialog(self):
         """Close dialog."""
         if self._dialog:
-            self._dialog.open = False
-            self.page.update()
+            self.page.pop_dialog()
+            self._dialog = None
 
     @property
     def value(self) -> str:

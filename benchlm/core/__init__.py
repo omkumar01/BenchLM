@@ -11,12 +11,15 @@ from benchlm.core.config import (
     BenchmarkPreset,
     PromptDataset,
 )
-from benchlm.core.benchmark_engine import BenchmarkEngine
-from benchlm.core.metrics_collector import MetricsCollector
+from benchlm.core.engine import (
+    BenchmarkEngine,
+    get_benchmark_engine,
+    initialize_benchmark_engine,
+)
+from benchlm.core.metrics import MetricsCollector
 from benchlm.core.scheduler import BenchmarkScheduler, BenchmarkPhase, BenchmarkResult
 from benchlm.core.statistics import StatisticsEngine
 from benchlm.core.scorer import ScoringEngine, BenchmarkScore, EloRatingSystem
-from benchlm.core.engine import BenchmarkEngine as BenchmarkEngineV2, get_benchmark_engine, initialize_benchmark_engine
 
 __all__ = [
     # Config
@@ -31,7 +34,6 @@ __all__ = [
     "PromptDataset",
     # Engine
     "BenchmarkEngine",
-    "BenchmarkEngineV2",
     "get_benchmark_engine",
     "initialize_benchmark_engine",
     # Scheduler

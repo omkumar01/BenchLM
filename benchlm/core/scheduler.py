@@ -370,7 +370,7 @@ class BenchmarkScheduler:
 
     async def _worker(self, worker_id: str):
         """Worker coroutine to process requests."""
-        while self._running or not self._queue.is_empty():
+        while self.is_running or not self._queue.is_empty():
             if self._cancelled:
                 break
 

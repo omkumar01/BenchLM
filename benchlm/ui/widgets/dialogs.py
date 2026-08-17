@@ -86,7 +86,7 @@ class AlertDialog(ft.AlertDialog):
         severity_config = {
             self.Severity.INFO: {"icon": ft.Icons.INFO_OUTLINE, "color": c.tertiary, "bg": c.tertiary + "20"},
             self.Severity.SUCCESS: {"icon": ft.Icons.CHECK_CIRCLE_OUTLINE, "color": c.success, "bg": c.success + "20"},
-            self.Severity.WARNING: {"icon": ft.Icons.WARNING_AMBER_OUTLINE, "color": c.warning, "bg": c.warning + "20"},
+            self.Severity.WARNING: {"icon": ft.Icons.WARNING_AMBER, "color": c.warning, "bg": c.warning + "20"},
             self.Severity.ERROR: {"icon": ft.Icons.ERROR_OUTLINE, "color": c.danger, "bg": c.danger + "20"},
         }
 
@@ -159,7 +159,6 @@ class InputDialog(ft.AlertDialog):
             text_size=14,
             border_color=c.outline,
             focused_border_color=c.primary,
-            focused_bgcolor=c.surface,
             bgcolor=c.surface_variant,
             color=c.on_surface,
             border_radius=8,

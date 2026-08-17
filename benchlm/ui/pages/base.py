@@ -27,14 +27,16 @@ class BasePage(ft.Container, ABC):
         # Page configuration
         self.expand = True
         self.padding = ft.Padding.all(0) # Padding is handled by app layout now
-        
-        # Initial animation state
-        self.opacity = 0
-        self.offset = ft.Offset(0, 0.05)
-        self.animate_opacity = ft.Animation(400, ft.AnimationCurve.DECELERATE)
-        self.animate_offset = ft.Animation(400, ft.AnimationCurve.DECELERATE)
-        
-        self.content = self._build()
+
+        # NOTE: no animated entry state - controls first painted at opacity 0
+        # then patched to 1.0 with animate_opacity never animate up in the
+        # Flet client, leaving pages invisible. Pages render statically.
+        self.opacity = 1
+
+        # _build may return the content control OR assign self.content itself
+        built = self._build()
+        if built is not None:
+            self.content = built
 
     @abstractmethod
     def _build(self) -> ft.Control:
@@ -44,11 +46,6 @@ class BasePage(ft.Container, ABC):
     async def on_mount(self):
         """Called when page is mounted/navigated to."""
         self._mounted = True
-        # Trigger entry animation
-        self.opacity = 1
-        self.offset = ft.Offset(0, 0)
-        self.update()
-        
         await self._on_mount()
 
     async def on_unmount(self):
@@ -83,25 +80,25 @@ class BasePage(ft.Container, ABC):
             "error": ft.Icons.ERROR_OUTLINE,
         }
 
-        self.page.snack_bar = ft.SnackBar(
-            content=ft.Row(
-                controls=[
-                    ft.Icon(icons.get(severity, icons["info"]), color=ft.Colors.WHITE),
-                    ft.Text(message, color=ft.Colors.WHITE, weight=ft.FontWeight.W_500),
-                ]
-            ),
-            bgcolor=colors.get(severity, colors["info"]),
-            duration=3000,
-            behavior=ft.SnackBarBehavior.FLOATING,
-            margin=ft.Margin.all(24),
-            shape=ft.RoundedRectangleBorder(radius=12),
+        self.page.show_dialog(
+            ft.SnackBar(
+                content=ft.Row(
+                    controls=[
+                        ft.Icon(icons.get(severity, icons["info"]), color=ft.Colors.WHITE),
+                        ft.Text(message, color=ft.Colors.WHITE, weight=ft.FontWeight.W_500),
+                    ]
+                ),
+                bgcolor=colors.get(severity, colors["info"]),
+                duration=3000,
+                behavior=ft.SnackBarBehavior.FLOATING,
+                margin=ft.Margin.all(24),
+                shape=ft.RoundedRectangleBorder(radius=12),
+            )
         )
-        self.page.snack_bar.open = True
-        self.page.update()
 
     def show_dialog(self, dialog: ft.AlertDialog):
         """Show a dialog."""
-        self.page.open(dialog)
+        self.page.show_dialog(dialog)
 
     def navigate(self, route: str):
         """Navigate to a route."""
