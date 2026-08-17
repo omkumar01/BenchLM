@@ -102,7 +102,7 @@ class BasePage(ft.Container, ABC):
 
     def navigate(self, route: str):
         """Navigate to a route."""
-        self.page.go(route)
+        self.page.push_route(route)
 
     def get_theme(self):
         """Get the current theme."""

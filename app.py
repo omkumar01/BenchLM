@@ -486,7 +486,7 @@ async def app_main(page: ft.Page):
 
 def main():
     """CLI entry point."""
-    ft.app(target=app_main, assets_dir="assets", view=ft.AppView.FLET_APP)
+    ft.run(app_main, view=ft.AppView.FLET_APP, assets_dir="assets")
 
 
 if __name__ == "__main__":
