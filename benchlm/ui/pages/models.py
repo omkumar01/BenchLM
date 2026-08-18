@@ -9,18 +9,7 @@ from benchlm.ui.pages.base import BasePage
 from benchlm.ui.widgets import (
     GlassCard,
     MetricCard,
-    VirtualizedTable,
-    ColumnConfig,
-    TableConfig,
-    SegmentedButton,
-    SelectField,
-    FormField,
-    FormFieldConfig,
-    StatusIndicator,
-    StatusConfig,
-    Badge,
     AlertDialog,
-    InputDialog,
 )
 from benchlm.ui.theme import get_theme
 from benchlm.config import get_config
@@ -38,7 +27,7 @@ class ModelInfo:
     parameters: str
     size_gb: float
     precision: str
-    status: str = "available"  # available, loading, error
+    status: str = "available"
 
 
 class ModelsPage(BasePage):
@@ -50,7 +39,6 @@ class ModelsPage(BasePage):
         self._selected_provider = ProviderType.OLLAMA
         self._models: List[ModelInfo] = []
         self._selected_models: set = set()
-        self._provider_instance = None
         super().__init__(page, route="/models", title="Models", icon=ft.Icons.MODEL_TRAINING, **kwargs)
 
     def _build(self):
@@ -91,22 +79,27 @@ class ModelsPage(BasePage):
         )
 
         # Provider Tabs
-        self._provider_tabs = SegmentedButton(
-            options=[
-                (ProviderType.OLLAMA.value, "Ollama", ft.Icons.CLOUD),
-                (ProviderType.LLAMA_CPP.value, "llama.cpp", ft.Icons.CODE),
-                (ProviderType.LMSTUDIO.value, "LM Studio", ft.Icons.DEVELOPER_BOARD),
-                (ProviderType.VLLM.value, "vLLM", ft.Icons.SPEED),
-                (ProviderType.OPENAI_COMPATIBLE.value, "OpenAI Compat.", ft.Icons.API),
+        self._provider_tabs = ft.SegmentedButton(
+            segments=[
+                ft.Segment(value=ProviderType.OLLAMA.value, icon=ft.Icons.CLOUD, label="Ollama"),
+                ft.Segment(value=ProviderType.LLAMA_CPP.value, icon=ft.Icons.CODE, label="llama.cpp"),
+                ft.Segment(value=ProviderType.LMSTUDIO.value, icon=ft.Icons.DEVELOPER_BOARD, label="LM Studio"),
+                ft.Segment(value=ProviderType.VLLM.value, icon=ft.Icons.SPEED, label="vLLM"),
+                ft.Segment(value=ProviderType.OPENAI_COMPATIBLE.value, icon=ft.Icons.API, label="OpenAI Compat."),
             ],
-            selected_key=self._selected_provider.value,
+            selected=[self._selected_provider.value],
             on_change=self._on_provider_change,
         )
 
-        # Model Table
-        self._model_table = self._build_model_table()
+        # Model list container
+        self._model_list = ft.Column(
+            controls=[],
+            spacing=8,
+            scroll=ft.ScrollMode.AUTO,
+            expand=True,
+        )
 
-        # Selection Toolbar (shown when models selected)
+        # Selection Toolbar
         self._selection_toolbar = ft.Container(
             content=ft.Row(
                 controls=[
@@ -139,6 +132,23 @@ class ModelsPage(BasePage):
             visible=False,
         )
 
+        # Empty state
+        self._empty_state = ft.Container(
+            content=ft.Column(
+                controls=[
+                    ft.Icon(ft.Icons.MODEL_TRAINING_OUTLINED, size=64, color=c.on_surface_disabled),
+                    ft.Container(height=16),
+                    ft.Text("No models loaded", size=16, color=c.on_surface_variant),
+                    ft.Text("Select a provider and refresh to load models", size=14, color=c.on_surface_disabled),
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.CENTER,
+            ),
+            alignment=ft.Alignment.CENTER,
+            height=300,
+            expand=True,
+        )
+
         # Main Content
         content = ft.Column(
             controls=[
@@ -149,10 +159,17 @@ class ModelsPage(BasePage):
                 GlassCard(
                     content=ft.Column(
                         controls=[
-                            self._model_table,
+                            ft.Stack(
+                                controls=[
+                                    self._model_list,
+                                    self._empty_state,
+                                ],
+                                expand=True,
+                            ),
                             self._selection_toolbar,
                         ],
                         spacing=0,
+                        expand=True,
                     ),
                 ),
             ],
@@ -162,50 +179,87 @@ class ModelsPage(BasePage):
 
         self.content = content
 
-    def _build_model_table(self) -> VirtualizedTable:
-        """Build the models table."""
+    def _build_model_row(self, model: ModelInfo, index: int) -> ft.Container:
+        """Build a single model row."""
         c = self._theme.colors
+        is_selected = model.name in self._selected_models
 
-        columns = [
-            ColumnConfig(key="name", label="Model Name", min_width=200, sortable=True),
-            ColumnConfig(key="provider", label="Provider", width=120, sortable=True),
-            ColumnConfig(key="quantization", label="Quantization", width=120, sortable=True),
-            ColumnConfig(key="context", label="Context", width=100, sortable=True, format_fn=lambda v: f"{v//1024}K" if v >= 1024 else str(v)),
-            ColumnConfig(key="parameters", label="Parameters", width=120, sortable=True),
-            ColumnConfig(key="size", label="Size", width=100, sortable=True, format_fn=lambda v: f"{v:.1f} GB"),
-            ColumnConfig(key="precision", label="Precision", width=100, sortable=True),
-            ColumnConfig(key="status", label="Status", width=100, sortable=True),
-            ColumnConfig(key="actions", label="", width=80, sortable=False),
-        ]
+        def _toggle_select(e):
+            self._toggle_model_selection(model)
 
-        config = TableConfig(
-            columns=columns,
-            row_height=52,
-            selectable=True,
-            multi_select=True,
-            on_selection_change=self._on_selection_change,
-            on_row_action=self._on_row_action,
-            virtualized=False,
+        def _open_actions(e):
+            self._show_model_actions(model)
+
+        return ft.Container(
+            content=ft.Row(
+                controls=[
+                    ft.Checkbox(
+                        value=is_selected,
+                        on_change=_toggle_select,
+                        fill_color=c.primary,
+                    ),
+                    ft.Container(width=16),
+                    ft.Column(
+                        controls=[
+                            ft.Text(model.name, size=14, weight=ft.FontWeight.W_500, color=c.on_surface),
+                            ft.Text(
+                                f"{model.parameters} | {model.context_window:,} ctx | {model.size_gb:.1f} GB",
+                                size=12,
+                                color=c.on_surface_variant,
+                            ),
+                        ],
+                        spacing=2,
+                        expand=True,
+                    ),
+                    ft.Container(expand=True),
+                    ft.Chip(
+                        label=ft.Text(model.status, size=12),
+                        bgcolor=c.surface_container_high,
+                        disabled=True,
+                    ),
+                    ft.Container(width=8),
+                    ft.IconButton(
+                        icon=ft.Icons.MORE_VERT,
+                        icon_color=c.on_surface_variant,
+                        on_click=_open_actions,
+                    ),
+                ],
+                alignment=ft.MainAxisAlignment.START,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+            padding=ft.Padding.symmetric(horizontal=16, vertical=12),
+            bgcolor=c.primary_container if is_selected else (
+                c.surface_container_high if index % 2 == 1 else c.surface
+            ),
+            border_radius=8,
+            on_click=_toggle_select,
         )
 
-        return VirtualizedTable(config=config, data=self._get_model_data())
+    def _toggle_model_selection(self, model: ModelInfo):
+        """Toggle model selection."""
+        if model.name in self._selected_models:
+            self._selected_models.discard(model.name)
+        else:
+            self._selected_models.add(model.name)
 
-    def _get_model_data(self) -> List[dict]:
-        """Get model data for table."""
-        return [
-            {
-                "name": m.name,
-                "provider": m.provider.value,
-                "quantization": m.quantization,
-                "context": m.context_window,
-                "parameters": m.parameters,
-                "size": m.size_gb,
-                "precision": m.precision,
-                "status": m.status,
-                "actions": "•••",
-            }
-            for m in self._models
-        ]
+        self._update_selection_toolbar()
+        self._render_model_list()
+
+    def _update_selection_toolbar(self):
+        """Update selection toolbar state."""
+        count = len(self._selected_models)
+        self._selection_toolbar.visible = count > 0
+        self._selection_toolbar.content.controls[0].value = f"{count} selected"
+        self._selection_toolbar.content.controls[2].disabled = count == 0
+        self._selection_toolbar.content.controls[4].disabled = count < 2
+        self._selection_toolbar.update()
+
+    def _render_model_list(self):
+        """Render model list."""
+        self._model_list.controls = [self._build_model_row(m, i) for i, m in enumerate(self._models)]
+        self._empty_state.visible = len(self._models) == 0
+        self._model_list.update()
+        self._empty_state.update()
 
     def _get_base_url_for_provider(self, provider_type: ProviderType) -> str:
         """Get base URL for a provider type from config."""
@@ -248,11 +302,9 @@ class ModelsPage(BasePage):
                 )
                 for m in models
             ]
-            return self._get_model_data()
         except Exception as e:
             self.show_snackbar(f"Failed to fetch models from {provider_type.value}: {e}", "error")
             self._models = []
-            return []
         finally:
             if provider:
                 try:
@@ -260,57 +312,93 @@ class ModelsPage(BasePage):
                 except Exception:
                     pass
 
-    def _on_provider_change(self, provider_key: str):
+    def _on_provider_change(self, e):
         """Handle provider tab change."""
-        self._selected_provider = ProviderType(provider_key)
-        asyncio.get_event_loop().create_task(self._refresh_models())
-
-    def _on_selection_change(self, selected_data: List[dict]):
-        """Handle model selection change."""
-        self._selected_models = {m["name"] for m in selected_data}
-        count = len(self._selected_models)
-
-        self._selection_toolbar.visible = count > 0
-        self._selection_toolbar.content.controls[0].value = f"{count} selected"
-        self._selection_toolbar.content.controls[2].disabled = count == 0  # Benchmark
-        self._selection_toolbar.content.controls[4].disabled = count < 2  # Compare
-        self._selection_toolbar.update()
+        selected = e.control.selected
+        if selected:
+            self._selected_provider = ProviderType(selected[0])
+            asyncio.ensure_future(self._refresh_models())
 
     async def _refresh_models(self):
         """Refresh model list from provider."""
         self.show_snackbar(f"Refreshing {self._selected_provider.value} models...", "info")
-        models_data = await self._fetch_models(force_refresh=True)
-
-        if not models_data:
-            models_data = [
-                {
-                    "name": "No models found",
-                    "provider": self._selected_provider.value,
-                    "quantization": "--",
-                    "context": 0,
-                    "parameters": "--",
-                    "size": 0.0,
-                    "precision": "--",
-                    "status": "error",
-                    "actions": "",
-                }
-            ]
-
-        self._model_table.data = models_data
-        self._model_table.refresh()
+        await self._fetch_models(force_refresh=True)
+        self._render_model_list()
 
     def _on_refresh_clicked(self, _):
         """Handle refresh button click."""
-        asyncio.get_event_loop().create_task(self._refresh_models())
+        asyncio.ensure_future(self._refresh_models())
 
-    def _on_row_action(self, row_data: dict, action: str):
-        """Handle action button clicks from table rows."""
-        if action == "benchmark":
+    def _show_model_actions(self, model: ModelInfo):
+        """Show action menu for a model."""
+        row_data = {
+            "name": model.name,
+            "provider": model.provider.value,
+            "quantization": model.quantization,
+            "context": model.context_window,
+            "parameters": model.parameters,
+            "size": model.size_gb,
+            "precision": model.precision,
+            "status": model.status,
+        }
+
+        def _benchmark(_):
+            self._close_dialog()
             self._benchmark_model(row_data)
-        elif action == "compare":
+
+        def _compare(_):
+            self._close_dialog()
             self._compare_model(row_data)
-        elif action == "details":
+
+        def _details(_):
+            self._close_dialog()
             self._show_model_details(row_data)
+
+        self.page.show_dialog(
+            ft.AlertDialog(
+                title=ft.Text(model.name, size=16, weight=ft.FontWeight.W_500),
+                content=ft.Column(
+                    controls=[
+                        ft.TextButton(
+                            content=ft.Row(
+                                controls=[
+                                    ft.Icon(ft.Icons.PLAY_ARROW, size=18),
+                                    ft.Text("Benchmark"),
+                                ],
+                                spacing=12,
+                            ),
+                            on_click=_benchmark,
+                        ),
+                        ft.TextButton(
+                            content=ft.Row(
+                                controls=[
+                                    ft.Icon(ft.Icons.COMPARE_ARROWS, size=18),
+                                    ft.Text("Compare"),
+                                ],
+                                spacing=12,
+                            ),
+                            on_click=_compare,
+                        ),
+                        ft.TextButton(
+                            content=ft.Row(
+                                controls=[
+                                    ft.Icon(ft.Icons.INFO_OUTLINE, size=18),
+                                    ft.Text("Details"),
+                                ],
+                                spacing=12,
+                            ),
+                            on_click=_details,
+                        ),
+                    ],
+                    spacing=4,
+                    tight=True,
+                ),
+                actions=[
+                    ft.TextButton(content="Cancel", on_click=lambda _: self._close_dialog()),
+                ],
+                actions_alignment=ft.MainAxisAlignment.END,
+            )
+        )
 
     def _benchmark_model(self, row_data: dict):
         """Navigate to benchmark with a single model."""
@@ -325,7 +413,6 @@ class ModelsPage(BasePage):
 
     def _show_model_details(self, row_data: dict):
         """Show model details dialog."""
-        c = self._theme.colors
         details = (
             f"Name: {row_data['name']}\n"
             f"Provider: {row_data['provider']}\n"
@@ -378,7 +465,7 @@ class ModelsPage(BasePage):
             filled=True,
             dense=True,
             autofocus=True,
-            on_submit=lambda _: asyncio.get_event_loop().create_task(self._pull_model(name_field.value)),
+            on_submit=lambda _: asyncio.ensure_future(self._pull_model(name_field.value)),
         )
 
         dlg = ft.AlertDialog(
@@ -400,7 +487,7 @@ class ModelsPage(BasePage):
                 ft.FilledButton(
                     content="Pull",
                     style=ft.ButtonStyle(bgcolor=c.primary),
-                    on_click=lambda _: asyncio.get_event_loop().create_task(self._pull_model(name_field.value)),
+                    on_click=lambda _: asyncio.ensure_future(self._pull_model(name_field.value)),
                 ),
             ],
             actions_alignment=ft.MainAxisAlignment.END,
@@ -448,7 +535,7 @@ class ModelsPage(BasePage):
             filled=True,
             dense=True,
             autofocus=True,
-            on_submit=lambda _: asyncio.get_event_loop().create_task(self._add_model(name_field.value)),
+            on_submit=lambda _: asyncio.ensure_future(self._add_model(name_field.value)),
         )
 
         dlg = ft.AlertDialog(
@@ -470,7 +557,7 @@ class ModelsPage(BasePage):
                 ft.FilledButton(
                     content="Add",
                     style=ft.ButtonStyle(bgcolor=c.primary),
-                    on_click=lambda _: asyncio.get_event_loop().create_task(self._add_model(name_field.value)),
+                    on_click=lambda _: asyncio.ensure_future(self._add_model(name_field.value)),
                 ),
             ],
             actions_alignment=ft.MainAxisAlignment.END,
@@ -498,8 +585,7 @@ class ModelsPage(BasePage):
                 status="available",
             )
         )
-        self._model_table.data = self._get_model_data()
-        self._model_table.refresh()
+        self._render_model_list()
 
     def _benchmark_selected(self):
         """Navigate to benchmark with selected models."""
@@ -513,11 +599,10 @@ class ModelsPage(BasePage):
 
     def _clear_selection(self):
         """Clear model selection."""
-        self._model_table.clear_selection()
         self._selected_models.clear()
-        self._selection_toolbar.visible = False
-        self._selection_toolbar.update()
+        self._update_selection_toolbar()
+        self._render_model_list()
 
     async def _on_mount(self):
         """Fetch models when page mounts."""
-        asyncio.get_event_loop().create_task(self._refresh_models())
+        asyncio.ensure_future(self._refresh_models())
